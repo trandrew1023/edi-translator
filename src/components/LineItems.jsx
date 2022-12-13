@@ -39,7 +39,7 @@ function LineItems({ lineItems, setLineItems }) {
   return (
     <Grid container>
       <Grid item xs={12}>
-        <Typography>Line Items</Typography>
+        <Typography variant='h4'>Line Items</Typography>
       </Grid>
       {lineItems && lineItems.map((lineItem) => (
         <LineItem

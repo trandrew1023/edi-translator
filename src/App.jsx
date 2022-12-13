@@ -24,7 +24,7 @@ function App() {
         maxWidth='md'
       >
         <Grid item xs={12}>
-          <Typography>EDI Translator</Typography>
+          <Typography variant='h2'>EDI Translator</Typography>
         </Grid>
         <Grid item xs={4}>
           <FormControl fullWidth>
@@ -36,14 +36,16 @@ function App() {
               value={form}
               onChange={handleFormChange}
             >
-              <MenuItem value={0}>None</MenuItem>
+              <MenuItem value={0}>Select form</MenuItem>
               <MenuItem value={855004010}>855 (v004010)</MenuItem>
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={12}>
+        {form == 855004010 && (
+          <Grid item xs={12}>
           <PurchaseOrder></PurchaseOrder>
         </Grid>
+        )}
       </Grid>
     </Box>
   );
