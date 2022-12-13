@@ -1,5 +1,6 @@
 export function to855(purchaseOrder, lineItems) {
   let text = ``;
+  let numberOfSegments = 0;
   text = text.concat(`ISA*00*          *00*          *ZZ*`);
   text = text.concat(purchaseOrder.senderId);
   text = text.padEnd(text.length + (15 - purchaseOrder.senderId.length));
@@ -7,24 +8,38 @@ export function to855(purchaseOrder, lineItems) {
   text = text.concat(purchaseOrder.receiverId);
   text = text.padEnd(text.length + (15 - purchaseOrder.receiverId.length));
   text = text.concat(`*`);
-  text = text.concat(purchaseOrder.purchaseOrderDate.format('YYMMDD'));
+  text = text.concat(purchaseOrder.poDate.format('YYMMDD'));
   text = text.concat(`*`);
-  text = text.concat(purchaseOrder.purchaseOrderTime.format('HHmm'));
+  text = text.concat(purchaseOrder.poDate.format('HHmm'));
   text = text.concat(`*U*00401*200001*0*P*>\\GS*PR*`);
   text = text.concat(purchaseOrder.senderId);
   text = text.concat(`*`);
   text = text.concat(purchaseOrder.receiverId);
   text = text.concat(`*`);
-  text = text.concat(purchaseOrder.purchaseOrderDate.format('YYYYMMDD'));
+  text = text.concat(purchaseOrder.poDate.format('YYYYMMDD'));
   text = text.concat(`*`);
-  text = text.concat(purchaseOrder.purchaseOrderTime.format('HHmm'));
+  text = text.concat(purchaseOrder.poDate.format('HHmm'));
   text = text.concat(`*300001*X*004010\\ST*855*400001\\BAK*00*`);
+  numberOfSegments++; // ST
   text = text.concat(purchaseOrder.acknowledgementType);
   text = text.concat(`*`);
   text = text.concat(purchaseOrder.purchaseOrderNumber);
   text = text.concat(`*`);
-  text = text.concat(purchaseOrder.purchaseOrderDate.format('YYYYMMDD'));
+  text = text.concat(purchaseOrder.poDate.format('YYYYMMDD'));
   text = text.concat(`\\`);
+  numberOfSegments++; // BAK
+  if (purchaseOrder.accountNumber) {
+    text = text.concat(`N1*ST**91*`);
+    text = text.concat(purchaseOrder.accountNumber);
+    text = text.concat(`\\`);
+    numberOfSegments++;
+  }
+  if (purchaseOrder.sentFrom) {
+    text = text.concat(`N1*SE**91*`);
+    text = text.concat(purchaseOrder.sentFrom);
+    text = text.concat(`\\`);
+    numberOfSegments++;
+  }
   lineItems.forEach((lineItem, index) => {
     text = text.concat(`PO1*`);
     text = text.concat(index + 1);
@@ -32,10 +47,15 @@ export function to855(purchaseOrder, lineItems) {
     text = text.concat(lineItem.orderedQuantity);
     text = text.concat(`*`);
     text = text.concat(lineItem.unitOfMeasure);
-    text = text.concat(`****VN*`);
+    text = text.concat(`*`);
+    text = text.concat(lineItem.price);
+    text = text.concat(`**VN*`);
     text = text.concat(lineItem.item);
-    text = text.concat(`\\PID*F****`);
-    text = text.concat(lineItem.description);
+    if (lineItem.description) {
+      text = text.concat(`\\PID*F****`);
+      text = text.concat(lineItem.description);
+      numberOfSegments++;
+    }
     text = text.concat(`\\ACK*`);
     text = text.concat(lineItem.acknowledgementStatus);
     text = text.concat(`*`);
@@ -43,11 +63,14 @@ export function to855(purchaseOrder, lineItems) {
     text = text.concat(`*`);
     text = text.concat(lineItem.unitOfMeasure);
     text = text.concat(`\\`);
+    numberOfSegments+=2;
   });
   text = text.concat(`CTT*`);
   text = text.concat(lineItems.length)
+  numberOfSegments++; // CTT
   text = text.concat(`\\SE*`);
-  text = text.concat(`12`);
+  numberOfSegments++; // SE
+  text = text.concat(numberOfSegments);
   text = text.concat(`*400001\\GE*1*300001\\IEA*1*200001\\`);
   return text;
 }

@@ -15,6 +15,8 @@ function LineItem({ lineItem, removeLineItem, updateLineItem }) {
       <Grid item md={4}>
         <TextField
           fullWidth
+          required
+          error={!lineItem.item}
           label='Item'
           value={lineItem.item}
           onChange={event => handleEventChange(event, 'item')}
@@ -31,6 +33,8 @@ function LineItem({ lineItem, removeLineItem, updateLineItem }) {
       <Grid item md={4}>
         <TextField
           fullWidth
+          required
+          error={!lineItem.unitOfMeasure}
           label='Unit of Measure'
           value={lineItem.unitOfMeasure}
           onChange={event => handleEventChange(event, 'unitOfMeasure')}
@@ -39,6 +43,8 @@ function LineItem({ lineItem, removeLineItem, updateLineItem }) {
       <Grid item md={4}>
         <TextField
           fullWidth
+          required
+          error={!lineItem.orderedQuantity}
           label='Ordered quantity'
           value={lineItem.orderedQuantity}
           onChange={event => handleEventChange(event, 'orderedQuantity')}
@@ -47,6 +53,8 @@ function LineItem({ lineItem, removeLineItem, updateLineItem }) {
       <Grid item md={4}>
         <TextField
           fullWidth
+          required
+          error={!lineItem.acknowledgedQuantity}
           label='Acknowledged quantity'
           value={lineItem.acknowledgedQuantity}
           onChange={event => handleEventChange(event, 'acknowledgedQuantity')}
@@ -55,6 +63,8 @@ function LineItem({ lineItem, removeLineItem, updateLineItem }) {
       <Grid item md={4}>
         <TextField
           fullWidth
+          required
+          error={!lineItem.price}
           label='Price'
           value={lineItem.price}
           onChange={event => handleEventChange(event, 'price')}
