@@ -1,0 +1,106 @@
+[
+  {
+    "code": "AA",
+    "description": "Item Accepted - Order Forwarded to Alternate Supplier Location"
+  },
+  {
+    "code": "AC",
+    "description": "Item Accepted and Shipped"
+  },
+  {
+    "code": "AR",
+    "description": "Item Accepted and Released for Shipment"
+  },
+  {
+    "code": "BP",
+    "description": "Item Accepted - Partial Shipment, Balance Backordered"
+  },
+  {
+    "code": "DR",
+    "description": "Item Accepted - Date Rescheduled"
+  },
+  {
+    "code": "IA",
+    "description": "Item Accepted"
+  },
+  {
+    "code": "IB",
+    "description": "Item Backordered"
+  },
+  {
+    "code": "IC",
+    "description": "Item Accepted - Changes Made"
+  },
+  {
+    "code": "ID",
+    "description": "Item Deleted"
+  },
+  {
+    "code": "IE",
+    "description": "Item Accepted - Price Pending"
+  },
+  {
+    "code": "IF",
+    "description": "Item on Hold - Incomplete Description"
+  },
+  {
+    "code": "IH",
+    "description": "Item on Hold"
+  },
+  {
+    "code": "IP",
+    "description": "Item Accepted - Price Changed"
+  },
+  {
+    "code": "IQ",
+    "description": "Item Accepted - Quantity Changed"
+  },
+  {
+    "code": "IR",
+    "description": "Item Rejected"
+  },
+  {
+    "code": "IS",
+    "description": "Item Accepted - Substitution Made"
+  },
+  {
+    "code": "IW",
+    "description": "Item on Hold - Waiver Required"
+  },
+  {
+    "code": "R1",
+    "description": "Item Rejected - Not a Contract Itemn"
+  },
+  {
+    "code": "R2",
+    "description": "Item Rejected - Invalid Item Product Number"
+  },
+  {
+    "code": "R3",
+    "description": "Item Rejected - Invalid Unit of Issue"
+  },
+  {
+    "code": "R4",
+    "description": "Item Rejected - Contract Item not Available"
+  },
+  {
+    "code": "R5",
+    "description": "Item Rejected - Reorder Item as a Just in Time (JIT) Order"
+  },
+  {
+    "code": "R6",
+    "description": "Item Rejected - Reorder Item as an Extended Delivery Order (EDO)"
+  },
+  {
+    "code": "R7",
+    "description": "Item Rejected - Reorder Item as a Drop Shipment"
+  },
+  {
+    "code": "R8",
+    "description": "Item Rejected - Reorder Item as a Surge Order"
+  },
+  {
+    "code": "SP",
+    "description": "Item Accepted - Schedule Date Pending"
+  }
+]

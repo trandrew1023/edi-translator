@@ -1,0 +1,62 @@
+[
+  {
+    "code": "AC",
+    "description": "Acknowledge - With Detail and Change"
+  },
+  {
+    "code": "AD",
+    "description": "Acknowledge - With Detail, No Change"
+  },
+  {
+    "code": "AE",
+    "description": "Acknowledge - With Exception Detail Only"
+  },
+  {
+    "code": "AH",
+    "description": "Acknowledge - Hold Status"
+  },
+  {
+    "code": "AK",
+    "description": "Acknowledge - No Detail or Change"
+  },
+  {
+    "code": "AP",
+    "description": "Acknowledge - Product Replenishment"
+  },
+  {
+    "code": "AT",
+    "description": "Accepted"
+  },
+  {
+    "code": "NA",
+    "description": "No Acknowledgment Needed"
+  },
+  {
+    "code": "RD",
+    "description": "Reject with Detail"
+  },
+  {
+    "code": "RF",
+    "description": "Reject with Exception Detail Only"
+  },
+  {
+    "code": "RJ",
+    "description": "Rejected - No Detail"
+  },
+  {
+    "code": "RN",
+    "description": "Rejected - Not as Agreed"
+  },
+  {
+    "code": "RO",
+    "description": "Rejected With Counter Offer"
+  },
+  {
+    "code": "RV",
+    "description": "Rejected - Violates Industry Practices"
+  },
+  {
+    "code": "ZZ",
+    "description": "Mutually Defined"
+  }
+]
