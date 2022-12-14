@@ -64,10 +64,10 @@ function App() {
             <IconButton
               onClick={() => toggleDarkMode()}
               sx={{
-                position: 'fixed',
-                right: 0,
-                // marginLeft: 'auto',
-                // float: 'right',
+                // position: 'fixed',
+                // right: 0,
+                marginLeft: 'auto',
+                float: 'right',
                 marginTop: -9,
               }}
             >
