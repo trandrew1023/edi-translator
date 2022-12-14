@@ -10,11 +10,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
+      - run: npm install
       - run: git config --global user.email "andrewtran1023@live.com"
       - run: git config --global user.name "Andrew Tran"
-      - run: git remote set-url origin https://github.com/trandrew1023/edi-translator
-      - run: npm install
+      - run: git remote set-url origin https://${github_token}@github.com/${repository}
       - run: npm run deploy
         env:
           user_name: 'github-actions[bot]'
