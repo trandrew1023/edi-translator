@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 import LineItem from './LineItem';
 
-function LineItems({ lineItems, setLineItems }) {
+function LineItems({ lineItems, lineItemErrors, setLineItems }) {
 
   const handleAddLineItem = () => {
     const newLineItems = [...lineItems];
@@ -44,6 +44,7 @@ function LineItems({ lineItems, setLineItems }) {
       {lineItems && lineItems.map((lineItem) => (
         <LineItem
           lineItem={lineItem}
+          lineItemError={lineItemErrors.get(lineItem.key)}
           key={lineItem.key}
           removeLineItem={removeLineItem}
           updateLineItem={updateLineItem}
@@ -51,7 +52,7 @@ function LineItems({ lineItems, setLineItems }) {
       ))}
       <Grid item xs={12}>
         <IconButton onClick={handleAddLineItem}>
-          <AddCircleIcon />
+          <AddCircleIcon sx={{ color: 'green' }} />
           <Typography>Add line item</Typography>
         </IconButton>
       </Grid>
@@ -61,6 +62,7 @@ function LineItems({ lineItems, setLineItems }) {
 
 LineItems.propTypes = {
   lineItems: PropTypes.array.isRequired,
+  lineItemErrors: PropTypes.objectOf(Map),
   setLineItems: PropTypes.func,
 };
 

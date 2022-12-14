@@ -46,27 +46,57 @@ function PurchaseOrder() {
   const [toolTipOpen, setToolTipOpen] = useState(false);
   const [saveToolTipOpen, setSaveToolTipOpen] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const [lineItemErrors, setLineItemErrors] = useState(new Map());
 
   const handleAckDateChange = (newValue) => {
-    setPurchaseOrder({...purchaseOrder, ackDate: newValue});
+    setPurchaseOrder({ ...purchaseOrder, ackDate: newValue });
   };
 
   const handlePoDateChange = (newValue) => {
-    setPurchaseOrder({...purchaseOrder, poDate: newValue});
+    setPurchaseOrder({ ...purchaseOrder, poDate: newValue });
   };
 
   const handleSubmit = () => {
     setFormErrors({});
+    setLineItemErrors(new Map());
     setText(``);
     handleSave();
     const checkForm = {};
     if (!purchaseOrder.purchaseOrderNumber) {
       checkForm.purchaseOrderNumber = true;
     }
-    if (checkForm && Object.keys(checkForm).length > 0) {
-      setFormErrors({...checkForm});
-      return;
+    if (!purchaseOrder.senderId) {
+      checkForm.senderId = true;
     }
+    if (!purchaseOrder.receiverId) {
+      checkForm.receiverId = true;
+    }
+    const checkLineItemErrors = new Map();
+    lineItems.forEach(lineItem => {
+      const key = lineItem.key;
+      if (!lineItem.item) {
+        checkLineItemErrors.set(key, { ...checkLineItemErrors.get(key), item: true })
+      }
+      if (!lineItem.unitOfMeasure) {
+        checkLineItemErrors.set(key, { ...checkLineItemErrors.get(key), unitOfMeasure: true })
+      }
+      if (!lineItem.orderedQuantity) {
+        checkLineItemErrors.set(key, { ...checkLineItemErrors.get(key), orderedQuantity: true })
+      }
+      if (!lineItem.price) {
+        checkLineItemErrors.set(key, { ...checkLineItemErrors.get(key), price: true })
+      }
+    });
+    let hasErrors = false;
+    if (checkLineItemErrors && checkLineItemErrors.size > 0) {
+      setLineItemErrors(checkLineItemErrors);
+      hasErrors = true;
+    }
+    if (checkForm && Object.keys(checkForm).length > 0) {
+      setFormErrors({ ...checkForm });
+      hasErrors = true;
+    }
+    if (hasErrors) return;
     let submittedPurchaseOrder = to855(purchaseOrder, lineItems);
     setText(submittedPurchaseOrder);
   };
@@ -78,6 +108,7 @@ function PurchaseOrder() {
 
   const handleReset = () => {
     setFormErrors({});
+    setLineItemErrors(new Map());
     setText(``);
     setPurchaseOrder({
       purchaseOrderNumber: '',
@@ -104,6 +135,7 @@ function PurchaseOrder() {
 
   const handleLineItemReset = () => {
     setFormErrors({});
+    setLineItemErrors(new Map());
     setLineItems([{
       key: nanoid(),
       item: '',
@@ -122,7 +154,7 @@ function PurchaseOrder() {
     const savedLineItems = localStorage.getItem('lineItems');
     if (savedPurchaseOrder) {
       savedPurchaseOrder = JSON.parse(savedPurchaseOrder);
-      setPurchaseOrder({...savedPurchaseOrder, poDate: dayjs(savedPurchaseOrder.poDate)});
+      setPurchaseOrder({ ...savedPurchaseOrder, poDate: dayjs(savedPurchaseOrder.poDate) });
     }
     if (savedLineItems) {
       setLineItems(JSON.parse(savedLineItems));
@@ -138,7 +170,7 @@ function PurchaseOrder() {
   };
 
   const editPurchaseOrder = (event, param) => {
-    setPurchaseOrder({...purchaseOrder, [param]: event.target.value});
+    setPurchaseOrder({ ...purchaseOrder, [param]: event.target.value });
   };
 
   return (
@@ -159,6 +191,8 @@ function PurchaseOrder() {
       <Grid item md={4}>
         <TextField
           fullWidth
+          required
+          error={formErrors.senderId}
           label='Sender ID'
           value={purchaseOrder.senderId}
           onChange={(event) => editPurchaseOrder(event, 'senderId')}
@@ -167,6 +201,8 @@ function PurchaseOrder() {
       <Grid item md={4}>
         <TextField
           fullWidth
+          required
+          error={formErrors.receiverId}
           label='Receiver ID'
           value={purchaseOrder.receiverId}
           onChange={(event) => editPurchaseOrder(event, 'receiverId')}
@@ -217,60 +253,69 @@ function PurchaseOrder() {
         </LocalizationProvider>
       </Grid>
       <Grid item xs={12}>
-        <LineItems lineItems={lineItems} setLineItems={setLineItems} />
+        <LineItems lineItems={lineItems} lineItemErrors={lineItemErrors} setLineItems={setLineItems} />
       </Grid>
-      {text &&
-        <Grid 
-        item 
-        xs={12}
+      {
+        text &&
+        <Grid
+          item
+          xs={12}
         >
           <Typography variant='h4'>Generated 855 file text</Typography>
-          <Box sx={{border: 1}}>
+          <Box sx={{ border: 1 }}>
             <Typography sx={{ wordBreak: "break-word" }}>{text.replace(/ /g, '\u00A0')}</Typography>
           </Box>
-          <Tooltip 
-          title='Copied to clipboard!' 
-          open={toolTipOpen} 
-          leaveDelay={750}
-          onClose={handleTooltipClose}
+          <Tooltip
+            title='Copied to clipboard!'
+            open={toolTipOpen}
+            leaveDelay={750}
+            onClose={handleTooltipClose}
           >
-          <IconButton 
-          onClick={() => {
-            navigator.clipboard.writeText(text);
-            setToolTipOpen(true);
-          }}
-          sx={{
-            marginLeft: 'auto',
-            float: 'right'
-          }}
-          >
-            <ContentCopyIcon/>
-          </IconButton>
+            <IconButton
+              onClick={() => {
+                navigator.clipboard.writeText(text);
+                setToolTipOpen(true);
+              }}
+              sx={{
+                marginLeft: 'auto',
+                float: 'right'
+              }}
+            >
+              <ContentCopyIcon />
+            </IconButton>
           </Tooltip>
         </Grid>
       }
       <Grid item xs={12}>
-        <Button onClick={handleSubmit} variant='contained'>Submit</Button>
-        {(formErrors && Object.keys(formErrors).length > 0) 
-        && <Typography sx={{color:'red'}}>Unable to generate, please check the fields</Typography>}
+        <Button
+          onClick={handleSubmit}
+          variant='contained'
+          color='success'
+        >
+          Submit
+        </Button>
+        {(formErrors && Object.keys(formErrors).length > 0
+          || (lineItemErrors && lineItemErrors.size > 0))
+          && <Typography sx={{ color: 'red' }}>Unable to generate, please check the fields</Typography>}
       </Grid>
       <Grid item xs={12}>
-      <Tooltip 
-          title='Saved!' 
-          open={saveToolTipOpen} 
+        <Tooltip
+          title='Saved!'
+          open={saveToolTipOpen}
           leaveDelay={750}
           onClose={handleSaveTooltipClose}
-          >
-        <Button
-        onClick={() => {
-          handleSave();
-          setSaveToolTipOpen(true);
-        }} 
-        variant='contained'
         >
-          Save
+          <Button
+            onClick={() => {
+              handleSave();
+              setSaveToolTipOpen(true);
+            }}
+            variant='contained'
+            color='success'
+          >
+            Save
           </Button>
-          </Tooltip>
+        </Tooltip>
       </Grid>
       <Grid item xs={12}>
         <Button
@@ -290,7 +335,7 @@ function PurchaseOrder() {
           Reset
         </Button>
       </Grid>
-    </Grid>
+    </Grid >
   );
 }
 

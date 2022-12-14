@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import poLineStatusCodes from '../static/data/poLineStatusCodes.json';
 
-function LineItem({ lineItem, removeLineItem, updateLineItem }) {
+function LineItem({ lineItem, lineItemError, removeLineItem, updateLineItem }) {
 
   const handleEventChange = (event, prop) => {
     updateLineItem(lineItem, prop, event.target.value);
@@ -16,7 +16,7 @@ function LineItem({ lineItem, removeLineItem, updateLineItem }) {
         <TextField
           fullWidth
           required
-          error={!lineItem.item}
+          error={lineItemError?.item}
           label='Item'
           value={lineItem.item}
           onChange={event => handleEventChange(event, 'item')}
@@ -34,7 +34,7 @@ function LineItem({ lineItem, removeLineItem, updateLineItem }) {
         <TextField
           fullWidth
           required
-          error={!lineItem.unitOfMeasure}
+          error={lineItemError?.unitOfMeasure}
           label='Unit of Measure'
           value={lineItem.unitOfMeasure}
           onChange={event => handleEventChange(event, 'unitOfMeasure')}
@@ -44,7 +44,7 @@ function LineItem({ lineItem, removeLineItem, updateLineItem }) {
         <TextField
           fullWidth
           required
-          error={!lineItem.orderedQuantity}
+          error={lineItemError?.orderedQuantity}
           label='Ordered quantity'
           value={lineItem.orderedQuantity}
           onChange={event => handleEventChange(event, 'orderedQuantity')}
@@ -54,7 +54,7 @@ function LineItem({ lineItem, removeLineItem, updateLineItem }) {
         <TextField
           fullWidth
           required
-          error={!lineItem.acknowledgedQuantity}
+          error={lineItemError?.acknowledgedQuantity}
           label='Acknowledged quantity'
           value={lineItem.acknowledgedQuantity}
           onChange={event => handleEventChange(event, 'acknowledgedQuantity')}
@@ -64,7 +64,7 @@ function LineItem({ lineItem, removeLineItem, updateLineItem }) {
         <TextField
           fullWidth
           required
-          error={!lineItem.price}
+          error={lineItemError?.price}
           label='Price'
           value={lineItem.price}
           onChange={event => handleEventChange(event, 'price')}
@@ -88,7 +88,7 @@ function LineItem({ lineItem, removeLineItem, updateLineItem }) {
       </Grid>
       <Grid item xs={12}>
         <IconButton onClick={() => removeLineItem(lineItem)}>
-          <RemoveCircleIcon />
+          <RemoveCircleIcon sx={{ color: 'red' }} />
           <Typography>Remove line item</Typography>
         </IconButton>
       </Grid>
@@ -106,6 +106,7 @@ LineItem.propTypes = {
     acknowledgementStatus: PropTypes.string,
     unitOfMeasure: PropTypes.string,
   }).isRequired,
+  lineItemError: PropTypes.object,
   removeLineItem: PropTypes.func.isRequired,
   updateLineItem: PropTypes.func.isRequired,
 };
