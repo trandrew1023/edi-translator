@@ -16,6 +16,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import DownloadIcon from '@mui/icons-material/Download';
 import { nanoid } from 'nanoid';
 import { to855 } from '../common/855Translator';
 import LineItems from './LineItems';
@@ -47,6 +48,7 @@ function PurchaseOrder() {
   const [saveToolTipOpen, setSaveToolTipOpen] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [lineItemErrors, setLineItemErrors] = useState(new Map());
+  const [fileDownload, setFileDownload] = useState('');
 
   const handleAckDateChange = (newValue) => {
     setPurchaseOrder({ ...purchaseOrder, ackDate: newValue });
@@ -98,6 +100,8 @@ function PurchaseOrder() {
     }
     if (hasErrors) return;
     let submittedPurchaseOrder = to855(purchaseOrder, lineItems);
+    const file = new Blob([submittedPurchaseOrder], { type: 'text/plain' });
+    setFileDownload(window.URL.createObjectURL(file));
     setText(submittedPurchaseOrder);
   };
 
@@ -284,6 +288,19 @@ function PurchaseOrder() {
               <ContentCopyIcon />
             </IconButton>
           </Tooltip>
+          <a
+          download='edi-translator.855'
+          href={fileDownload}
+          >
+          <IconButton
+              sx={{
+                marginLeft: 'auto',
+                float: 'right'
+              }}
+            >
+              <DownloadIcon />
+            </IconButton>
+            </a>
         </Grid>
       }
       <Grid item xs={12}>
