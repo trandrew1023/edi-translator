@@ -26,6 +26,8 @@ export function to855(purchaseOrder, lineItems) {
   text = text.concat(purchaseOrder.purchaseOrderNumber);
   text = text.concat(`*`);
   text = text.concat(purchaseOrder.poDate.format('YYYYMMDD'));
+  text = text.concat(`*****`);
+  text = text.concat(purchaseOrder.ackDate.format('YYYYMMDD'));
   text = text.concat(`\\`);
   numberOfSegments++; // BAK
   if (purchaseOrder.headerComment) {

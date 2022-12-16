@@ -19,6 +19,7 @@ import AddCommentIcon from '@mui/icons-material/AddComment';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CommentIcon from '@mui/icons-material/Comment';
 import DownloadIcon from '@mui/icons-material/Download';
+import UpdateIcon from '@mui/icons-material/Update';
 import { nanoid } from 'nanoid';
 import { to855 } from '../common/855Translator';
 import LineItems from './LineItems';
@@ -184,6 +185,7 @@ function PurchaseOrder() {
       setPurchaseOrder({
         ...savedPurchaseOrder,
         poDate: dayjs(savedPurchaseOrder.poDate),
+        ackDate: dayjs(savedPurchaseOrder.ackDate),
       });
     }
     if (savedLineItems) {
@@ -255,6 +257,9 @@ function PurchaseOrder() {
             renderInput={(params) => <TextField fullWidth {...params} />}
           />
         </LocalizationProvider>
+        <IconButton onClick={() => handlePoDateChange(dayjs(new Date()))}>
+          <UpdateIcon />
+        </IconButton>
       </Grid>
       <Grid item md={4}>
         <FormControl fullWidth>
@@ -283,6 +288,9 @@ function PurchaseOrder() {
             renderInput={(params) => <TextField {...params} fullWidth />}
           />
         </LocalizationProvider>
+        <IconButton onClick={() => handleAckDateChange(dayjs(new Date()))}>
+          <UpdateIcon />
+        </IconButton>
       </Grid>
       <Grid item md={4}>
         <IconButton onClick={() => setCommentModalOpen(true)}>
