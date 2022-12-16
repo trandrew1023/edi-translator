@@ -9,6 +9,7 @@ export default function CommentModal({
   comment,
   setComment,
   header,
+  target,
 }) {
   const [editComment, setEditComment] = useState(comment);
   const style = {
@@ -25,7 +26,7 @@ export default function CommentModal({
   };
 
   const handleSubmit = () => {
-    setComment({ target: { value: editComment } }, 'headerComment');
+    setComment({ target: { value: editComment } }, target);
     setCommentModalOpen(false);
   };
 
@@ -84,4 +85,5 @@ CommentModal.propTypes = {
   comment: PropTypes.string.isRequired,
   setComment: PropTypes.func.isRequired,
   header: PropTypes.string.isRequired,
+  target: PropTypes.string.isRequired,
 };
