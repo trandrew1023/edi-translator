@@ -28,6 +28,12 @@ export function to855(purchaseOrder, lineItems) {
   text = text.concat(purchaseOrder.poDate.format('YYYYMMDD'));
   text = text.concat(`\\`);
   numberOfSegments++; // BAK
+  if (purchaseOrder.headerComment) {
+    text = text.concat(`N9*L1*SEE COMMENTS\\MSG*`);
+    text = text.concat(purchaseOrder.headerComment);
+    text = text.concat(`\\`);
+    numberOfSegments += 2;
+  }
   if (purchaseOrder.accountNumber) {
     text = text.concat(`N1*ST**91*`);
     text = text.concat(purchaseOrder.accountNumber);
@@ -63,10 +69,10 @@ export function to855(purchaseOrder, lineItems) {
     text = text.concat(`*`);
     text = text.concat(lineItem.unitOfMeasure);
     text = text.concat(`\\`);
-    numberOfSegments+=2;
+    numberOfSegments += 2;
   });
   text = text.concat(`CTT*`);
-  text = text.concat(lineItems.length)
+  text = text.concat(lineItems.length);
   numberOfSegments++; // CTT
   text = text.concat(`\\SE*`);
   numberOfSegments++; // SE
@@ -75,6 +81,4 @@ export function to855(purchaseOrder, lineItems) {
   return text;
 }
 
-export function from855() {
-
-}
+export function from855() {}

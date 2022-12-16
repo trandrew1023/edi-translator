@@ -15,25 +15,30 @@ import {
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import AddCommentIcon from '@mui/icons-material/AddComment';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import CommentIcon from '@mui/icons-material/Comment';
 import DownloadIcon from '@mui/icons-material/Download';
 import { nanoid } from 'nanoid';
 import { to855 } from '../common/855Translator';
 import LineItems from './LineItems';
 import poAckTypeCodes from '../static/data/poAckTypeCodes.json';
 import { Box } from '@mui/system';
+import CommentModal from './CommentModal';
 
 function PurchaseOrder() {
-  const [lineItems, setLineItems] = useState([{
-    key: nanoid(),
-    item: '',
-    description: '',
-    unitOfMeasure: 'EA',
-    orderedQuantity: '0',
-    acknowledgedQuantity: '0',
-    price: '0.00',
-    acknowledgementStatus: 'IA',
-  }]);
+  const [lineItems, setLineItems] = useState([
+    {
+      key: nanoid(),
+      item: '',
+      description: '',
+      unitOfMeasure: 'EA',
+      orderedQuantity: '0',
+      acknowledgedQuantity: '0',
+      price: '0.00',
+      acknowledgementStatus: 'IA',
+    },
+  ]);
   const [text, setText] = useState(``);
   const [purchaseOrder, setPurchaseOrder] = useState({
     purchaseOrderNumber: '',
@@ -43,12 +48,14 @@ function PurchaseOrder() {
     poDate: dayjs(new Date()),
     ackDate: dayjs(new Date()),
     acknowledgementType: 'AC',
+    headerComment: '',
   });
   const [toolTipOpen, setToolTipOpen] = useState(false);
   const [saveToolTipOpen, setSaveToolTipOpen] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [lineItemErrors, setLineItemErrors] = useState(new Map());
   const [fileDownload, setFileDownload] = useState('');
+  const [commentModalOpen, setCommentModalOpen] = useState(false);
 
   const handleAckDateChange = (newValue) => {
     setPurchaseOrder({ ...purchaseOrder, ackDate: newValue });
@@ -74,19 +81,31 @@ function PurchaseOrder() {
       checkForm.receiverId = true;
     }
     const checkLineItemErrors = new Map();
-    lineItems.forEach(lineItem => {
+    lineItems.forEach((lineItem) => {
       const key = lineItem.key;
       if (!lineItem.item) {
-        checkLineItemErrors.set(key, { ...checkLineItemErrors.get(key), item: true })
+        checkLineItemErrors.set(key, {
+          ...checkLineItemErrors.get(key),
+          item: true,
+        });
       }
       if (!lineItem.unitOfMeasure) {
-        checkLineItemErrors.set(key, { ...checkLineItemErrors.get(key), unitOfMeasure: true })
+        checkLineItemErrors.set(key, {
+          ...checkLineItemErrors.get(key),
+          unitOfMeasure: true,
+        });
       }
       if (!lineItem.orderedQuantity) {
-        checkLineItemErrors.set(key, { ...checkLineItemErrors.get(key), orderedQuantity: true })
+        checkLineItemErrors.set(key, {
+          ...checkLineItemErrors.get(key),
+          orderedQuantity: true,
+        });
       }
       if (!lineItem.price) {
-        checkLineItemErrors.set(key, { ...checkLineItemErrors.get(key), price: true })
+        checkLineItemErrors.set(key, {
+          ...checkLineItemErrors.get(key),
+          price: true,
+        });
       }
     });
     let hasErrors = false;
@@ -123,16 +142,18 @@ function PurchaseOrder() {
       ackDate: dayjs(new Date()),
       acknowledgementType: 'AC',
     });
-    setLineItems([{
-      key: nanoid(),
-      item: '',
-      description: '',
-      unitOfMeasure: 'EA',
-      orderedQuantity: '0',
-      acknowledgedQuantity: '0',
-      price: '0.00',
-      acknowledgementStatus: 'IA',
-    }])
+    setLineItems([
+      {
+        key: nanoid(),
+        item: '',
+        description: '',
+        unitOfMeasure: 'EA',
+        orderedQuantity: '0',
+        acknowledgedQuantity: '0',
+        price: '0.00',
+        acknowledgementStatus: 'IA',
+      },
+    ]);
     localStorage.removeItem('purchaseOrder');
     localStorage.removeItem('lineItems');
   };
@@ -140,16 +161,18 @@ function PurchaseOrder() {
   const handleLineItemReset = () => {
     setFormErrors({});
     setLineItemErrors(new Map());
-    setLineItems([{
-      key: nanoid(),
-      item: '',
-      description: '',
-      unitOfMeasure: 'EA',
-      orderedQuantity: '0',
-      acknowledgedQuantity: '0',
-      price: '0.00',
-      acknowledgementStatus: 'IA',
-    }])
+    setLineItems([
+      {
+        key: nanoid(),
+        item: '',
+        description: '',
+        unitOfMeasure: 'EA',
+        orderedQuantity: '0',
+        acknowledgedQuantity: '0',
+        price: '0.00',
+        acknowledgementStatus: 'IA',
+      },
+    ]);
     localStorage.removeItem('lineItems');
   };
 
@@ -158,7 +181,10 @@ function PurchaseOrder() {
     const savedLineItems = localStorage.getItem('lineItems');
     if (savedPurchaseOrder) {
       savedPurchaseOrder = JSON.parse(savedPurchaseOrder);
-      setPurchaseOrder({ ...savedPurchaseOrder, poDate: dayjs(savedPurchaseOrder.poDate) });
+      setPurchaseOrder({
+        ...savedPurchaseOrder,
+        poDate: dayjs(savedPurchaseOrder.poDate),
+      });
     }
     if (savedLineItems) {
       setLineItems(JSON.parse(savedLineItems));
@@ -180,14 +206,14 @@ function PurchaseOrder() {
   return (
     <Grid container spacing={4}>
       <Grid item xs={12} mb={-4}>
-        <Typography variant='h4'>Purchase Order Header</Typography>
+        <Typography variant="h4">Purchase Order Header</Typography>
       </Grid>
       <Grid item md={4}>
         <TextField
           fullWidth
           required
           error={formErrors.purchaseOrderNumber}
-          label='Purchase order #'
+          label="Purchase order #"
           value={purchaseOrder.purchaseOrderNumber}
           onChange={(event) => editPurchaseOrder(event, 'purchaseOrderNumber')}
         />
@@ -197,7 +223,7 @@ function PurchaseOrder() {
           fullWidth
           required
           error={formErrors.senderId}
-          label='Sender ID'
+          label="Sender ID"
           value={purchaseOrder.senderId}
           onChange={(event) => editPurchaseOrder(event, 'senderId')}
         />
@@ -207,7 +233,7 @@ function PurchaseOrder() {
           fullWidth
           required
           error={formErrors.receiverId}
-          label='Receiver ID'
+          label="Receiver ID"
           value={purchaseOrder.receiverId}
           onChange={(event) => editPurchaseOrder(event, 'receiverId')}
         />
@@ -215,7 +241,7 @@ function PurchaseOrder() {
       <Grid item md={4}>
         <TextField
           fullWidth
-          label='Account number'
+          label="Account number"
           value={purchaseOrder.accountNumber}
           onChange={(event) => editPurchaseOrder(event, 'accountNumber')}
         />
@@ -236,13 +262,15 @@ function PurchaseOrder() {
           <Select
             label="Acknowledgement type"
             value={purchaseOrder.acknowledgementType}
-            onChange={(event) => editPurchaseOrder(event, 'acknowledgementType')}
+            onChange={(event) =>
+              editPurchaseOrder(event, 'acknowledgementType')
+            }
           >
-            {poAckTypeCodes.map((poAckTypeCode => (
+            {poAckTypeCodes.map((poAckTypeCode) => (
               <MenuItem value={poAckTypeCode.code} key={poAckTypeCode.code}>
-                {poAckTypeCode.code + ' (' + poAckTypeCode.description + ")"}
+                {poAckTypeCode.code + ' (' + poAckTypeCode.description + ')'}
               </MenuItem>
-            )))}
+            ))}
           </Select>
         </FormControl>
       </Grid>
@@ -256,21 +284,28 @@ function PurchaseOrder() {
           />
         </LocalizationProvider>
       </Grid>
-      <Grid item xs={12}>
-        <LineItems lineItems={lineItems} lineItemErrors={lineItemErrors} setLineItems={setLineItems} />
+      <Grid item md={4}>
+        <IconButton onClick={() => setCommentModalOpen(true)}>
+          {purchaseOrder.headerComment ? <CommentIcon /> : <AddCommentIcon />}
+        </IconButton>
       </Grid>
-      {
-        text &&
-        <Grid
-          item
-          xs={12}
-        >
-          <Typography variant='h4'>Generated 855 file text</Typography>
+      <Grid item xs={12}>
+        <LineItems
+          lineItems={lineItems}
+          lineItemErrors={lineItemErrors}
+          setLineItems={setLineItems}
+        />
+      </Grid>
+      {text && (
+        <Grid item xs={12}>
+          <Typography variant="h4">Generated 855 file text</Typography>
           <Box sx={{ border: 1 }}>
-            <Typography sx={{ wordBreak: "break-word" }}>{text.replace(/ /g, '\u00A0')}</Typography>
+            <Typography sx={{ wordBreak: 'break-word' }}>
+              {text.replace(/ /g, '\u00A0')}
+            </Typography>
           </Box>
           <Tooltip
-            title='Copied to clipboard!'
+            title="Copied to clipboard!"
             open={toolTipOpen}
             leaveDelay={750}
             onClose={handleTooltipClose}
@@ -282,42 +317,38 @@ function PurchaseOrder() {
               }}
               sx={{
                 marginLeft: 'auto',
-                float: 'right'
+                float: 'right',
               }}
             >
               <ContentCopyIcon />
             </IconButton>
           </Tooltip>
-          <a
-          download='edi-translator.855'
-          href={fileDownload}
-          >
-          <IconButton
+          <a download="edi-translator.855" href={fileDownload}>
+            <IconButton
               sx={{
                 marginLeft: 'auto',
-                float: 'right'
+                float: 'right',
               }}
             >
               <DownloadIcon />
             </IconButton>
-            </a>
+          </a>
         </Grid>
-      }
+      )}
       <Grid item xs={12}>
-        <Button
-          onClick={handleSubmit}
-          variant='contained'
-          color='success'
-        >
+        <Button onClick={handleSubmit} variant="contained" color="success">
           Submit
         </Button>
-        {(formErrors && Object.keys(formErrors).length > 0
-          || (lineItemErrors && lineItemErrors.size > 0))
-          && <Typography sx={{ color: 'red' }}>Unable to generate, please check the fields</Typography>}
+        {((formErrors && Object.keys(formErrors).length > 0) ||
+          (lineItemErrors && lineItemErrors.size > 0)) && (
+          <Typography sx={{ color: 'red' }}>
+            Unable to generate, please check the fields
+          </Typography>
+        )}
       </Grid>
       <Grid item xs={12}>
         <Tooltip
-          title='Saved!'
+          title="Saved!"
           open={saveToolTipOpen}
           leaveDelay={750}
           onClose={handleSaveTooltipClose}
@@ -327,8 +358,8 @@ function PurchaseOrder() {
               handleSave();
               setSaveToolTipOpen(true);
             }}
-            variant='contained'
-            color='success'
+            variant="contained"
+            color="success"
           >
             Save
           </Button>
@@ -337,7 +368,7 @@ function PurchaseOrder() {
       <Grid item xs={12}>
         <Button
           onClick={handleLineItemReset}
-          variant='contained'
+          variant="contained"
           sx={{ backgroundColor: 'red' }}
         >
           Clear line items
@@ -346,13 +377,22 @@ function PurchaseOrder() {
       <Grid item xs={12} mb={4}>
         <Button
           onClick={handleReset}
-          variant='contained'
+          variant="contained"
           sx={{ backgroundColor: 'red' }}
         >
           Reset
         </Button>
       </Grid>
-    </Grid >
+      {commentModalOpen && (
+        <CommentModal
+          commentModalOpen={commentModalOpen}
+          setCommentModalOpen={setCommentModalOpen}
+          comment={purchaseOrder.headerComment}
+          setComment={editPurchaseOrder}
+          header={'Header Comment'}
+        />
+      )}
+    </Grid>
   );
 }
 
