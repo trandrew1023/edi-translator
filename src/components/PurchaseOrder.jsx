@@ -390,6 +390,7 @@ function PurchaseOrder() {
           comment={purchaseOrder.headerComment}
           setComment={editPurchaseOrder}
           header={'Header Comment'}
+          target={'headerComment'}
         />
       )}
     </Grid>

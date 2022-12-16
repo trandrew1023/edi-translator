@@ -70,6 +70,12 @@ export function to855(purchaseOrder, lineItems) {
     text = text.concat(lineItem.unitOfMeasure);
     text = text.concat(`\\`);
     numberOfSegments += 2;
+    if (lineItem.comment) {
+      text = text.concat(`N9*L1*SEE COMMENTS\\MSG*`);
+      text = text.concat(lineItem.comment);
+      text = text.concat(`\\`);
+      numberOfSegments += 2;
+    }
   });
   text = text.concat(`CTT*`);
   text = text.concat(lineItems.length);
