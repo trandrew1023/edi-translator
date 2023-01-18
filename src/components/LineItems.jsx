@@ -7,8 +7,22 @@ import LineItem from './LineItem';
 
 function LineItems({ lineItems, lineItemErrors, setLineItems }) {
 
+
+
   const handleAddLineItem = () => {
-    const newLineItems = [...lineItems];
+    const newLineItems = new Map(lineItems);
+    newLineItems.set(
+        nanoid(),
+        {
+          item: '',
+          description: '',
+          unitOfMeasure: 'EA',
+          orderedQuantity: '0',
+          acknowledgedQuantity: '0',
+          price: '0.00',
+          acknowledgementStatus: 'IA',
+        }
+    )
     newLineItems.push({
       key: nanoid(),
       item: '',
