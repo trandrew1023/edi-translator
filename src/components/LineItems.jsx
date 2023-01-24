@@ -23,30 +23,20 @@ function LineItems({ lineItems, lineItemErrors, setLineItems }) {
           acknowledgementStatus: 'IA',
         }
     )
-    newLineItems.push({
-      key: nanoid(),
-      item: '',
-      description: '',
-      unitOfMeasure: 'EA',
-      orderedQuantity: '0',
-      acknowledgedQuantity: '0',
-      price: '0.00',
-      acknowledgementStatus: 'IA',
-    });
     setLineItems(newLineItems);
   };
 
-  const removeLineItem = (lineItem) => {
-    const newLineItems = [...lineItems];
-    const idx = newLineItems.indexOf(lineItem);
-    newLineItems.splice(idx, 1);
+  const removeLineItem = (key) => {
+    const newLineItems = new Map(lineItems);
+    newLineItems.delete(key);
+
     setLineItems(newLineItems);
   };
 
-  const updateLineItem = (lineItem, field, updatedValue) => {
-    const newLineItems = [...lineItems];
-    const idx = newLineItems.indexOf(lineItem);
-    newLineItems[idx][field] = updatedValue;
+  const updateLineItem = (key, field, updatedValue) => {
+    const newLineItems = new Map(lineItems);
+    newLineItems.get(key)[field] = updatedValue;
+
     setLineItems(newLineItems);
   }
 
@@ -55,11 +45,12 @@ function LineItems({ lineItems, lineItemErrors, setLineItems }) {
       <Grid item xs={12}>
         <Typography variant='h4'>Line Items</Typography>
       </Grid>
-      {lineItems && lineItems.map((lineItem) => (
+      {lineItems && Array.from(lineItems).map(([key, lineItem]) => (
         <LineItem
+          key={key}
           lineItem={lineItem}
-          lineItemError={lineItemErrors.get(lineItem.key)}
-          key={lineItem.key}
+          lineItemError={lineItemErrors.get(key)}
+          mapID={key}
           removeLineItem={removeLineItem}
           updateLineItem={updateLineItem}
         />
@@ -75,7 +66,7 @@ function LineItems({ lineItems, lineItemErrors, setLineItems }) {
 }
 
 LineItems.propTypes = {
-  lineItems: PropTypes.array.isRequired,
+  lineItems: PropTypes.objectOf(Map),
   lineItemErrors: PropTypes.objectOf(Map),
   setLineItems: PropTypes.func,
 };

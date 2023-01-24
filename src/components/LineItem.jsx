@@ -17,10 +17,10 @@ import poLineStatusCodes from '../static/data/poLineStatusCodes.json';
 import { useState } from 'react';
 import CommentModal from './CommentModal';
 
-function LineItem({ lineItem, lineItemError, removeLineItem, updateLineItem }) {
+function LineItem({ lineItem, lineItemError, mapID, removeLineItem, updateLineItem }) {
   const [commentModalOpen, setCommentModalOpen] = useState(false);
   const handleEventChange = (event, prop) => {
-    updateLineItem(lineItem, prop, event.target.value);
+    updateLineItem(mapID, prop, event.target.value);
   };
 
   return (
@@ -113,7 +113,7 @@ function LineItem({ lineItem, lineItemError, removeLineItem, updateLineItem }) {
         </IconButton>
       </Grid>
       <Grid item xs={12}>
-        <IconButton onClick={() => removeLineItem(lineItem)}>
+        <IconButton onClick={() => removeLineItem(mapID)}>
           <RemoveCircleIcon sx={{ color: 'red' }} />
           <Typography>Remove line item</Typography>
         </IconButton>
@@ -144,6 +144,7 @@ LineItem.propTypes = {
     comment: PropTypes.string,
   }).isRequired,
   lineItemError: PropTypes.object,
+  mapID: PropTypes.string.isRequired,
   removeLineItem: PropTypes.func.isRequired,
   updateLineItem: PropTypes.func.isRequired,
 };
