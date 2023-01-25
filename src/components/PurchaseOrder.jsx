@@ -128,7 +128,7 @@ function PurchaseOrder() {
 
   const handleSave = () => {
     localStorage.setItem('purchaseOrder', JSON.stringify(purchaseOrder));
-    localStorage.setItem('lineItems', JSON.stringify(lineItems));
+    localStorage.setItem('lineItems', JSON.stringify([...lineItems]));
   };
 
   const handleReset = () => {
@@ -192,7 +192,7 @@ function PurchaseOrder() {
       });
     }
     if (savedLineItems) {
-      setLineItems(JSON.parse(savedLineItems));
+      setLineItems(new Map(JSON.parse(savedLineItems)));
     }
   }, []);
 
