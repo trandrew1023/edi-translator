@@ -96,7 +96,7 @@ function App() {
           )}
         </Grid>
       </Box>
-    </ThemeProvider>  
+    </ThemeProvider>
   );
 }
 
