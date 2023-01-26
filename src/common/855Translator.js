@@ -82,7 +82,7 @@ export function to855(purchaseOrder, lineItems) {
     index++;
   });
   text = text.concat(`CTT*`);
-  text = text.concat(lineItems.length);
+  text = text.concat(lineItems.size);
   numberOfSegments++; // CTT
   text = text.concat(`\\SE*`);
   numberOfSegments++; // SE
