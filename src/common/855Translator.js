@@ -48,10 +48,10 @@ export function to855(purchaseOrder, lineItems) {
     text = text.concat(`\\`);
     numberOfSegments++;
   }
-  let index = 0;
+  let index = 1;
   lineItems.forEach((lineItem) => {
     text = text.concat(`PO1*`);
-    text = text.concat(index + 1);
+    text = text.concat(index++);
     text = text.concat(`*`);
     text = text.concat(lineItem.orderedQuantity);
     text = text.concat(`*`);
@@ -79,7 +79,6 @@ export function to855(purchaseOrder, lineItems) {
       text = text.concat(`\\`);
       numberOfSegments += 2;
     }
-    index++;
   });
   text = text.concat(`CTT*`);
   text = text.concat(lineItems.size);
