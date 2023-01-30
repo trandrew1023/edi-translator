@@ -28,18 +28,20 @@ import { Box } from '@mui/system';
 import CommentModal from './CommentModal';
 
 function PurchaseOrder() {
-  const [lineItems, setLineItems] = useState([
-    {
-      key: nanoid(),
-      item: '',
-      description: '',
-      unitOfMeasure: 'EA',
-      orderedQuantity: '0',
-      acknowledgedQuantity: '0',
-      price: '0.00',
-      acknowledgementStatus: 'IA',
-    },
-  ]);
+  const [lineItems, setLineItems] = useState(
+    new Map([
+      [nanoid(), {
+        item: '',
+        description: '',
+        unitOfMeasure: 'EA',
+        orderedQuantity: '0',
+        acknowledgedQuantity: '0',
+        price: '0.00',
+        acknowledgementStatus: 'IA',
+      }]
+    ])
+  )
+
   const [text, setText] = useState(``);
   const [purchaseOrder, setPurchaseOrder] = useState({
     purchaseOrderNumber: '',
@@ -82,8 +84,7 @@ function PurchaseOrder() {
       checkForm.receiverId = true;
     }
     const checkLineItemErrors = new Map();
-    lineItems.forEach((lineItem) => {
-      const key = lineItem.key;
+    lineItems.forEach((lineItem, key) => {
       if (!lineItem.item) {
         checkLineItemErrors.set(key, {
           ...checkLineItemErrors.get(key),
@@ -127,7 +128,7 @@ function PurchaseOrder() {
 
   const handleSave = () => {
     localStorage.setItem('purchaseOrder', JSON.stringify(purchaseOrder));
-    localStorage.setItem('lineItems', JSON.stringify(lineItems));
+    localStorage.setItem('lineItems', JSON.stringify([...lineItems]));
   };
 
   const handleReset = () => {
@@ -143,18 +144,19 @@ function PurchaseOrder() {
       ackDate: dayjs(new Date()),
       acknowledgementType: 'AC',
     });
-    setLineItems([
-      {
-        key: nanoid(),
-        item: '',
-        description: '',
-        unitOfMeasure: 'EA',
-        orderedQuantity: '0',
-        acknowledgedQuantity: '0',
-        price: '0.00',
-        acknowledgementStatus: 'IA',
-      },
-    ]);
+    setLineItems(
+      new Map([
+        [nanoid(), {
+          item: '',
+          description: '',
+          unitOfMeasure: 'EA',
+          orderedQuantity: '0',
+          acknowledgedQuantity: '0',
+          price: '0.00',
+          acknowledgementStatus: 'IA',
+        }]
+      ])
+    );
     localStorage.removeItem('purchaseOrder');
     localStorage.removeItem('lineItems');
   };
@@ -162,18 +164,19 @@ function PurchaseOrder() {
   const handleLineItemReset = () => {
     setFormErrors({});
     setLineItemErrors(new Map());
-    setLineItems([
-      {
-        key: nanoid(),
-        item: '',
-        description: '',
-        unitOfMeasure: 'EA',
-        orderedQuantity: '0',
-        acknowledgedQuantity: '0',
-        price: '0.00',
-        acknowledgementStatus: 'IA',
-      },
-    ]);
+    setLineItems(
+      new Map([
+        [nanoid(), {
+          item: '',
+          description: '',
+          unitOfMeasure: 'EA',
+          orderedQuantity: '0',
+          acknowledgedQuantity: '0',
+          price: '0.00',
+          acknowledgementStatus: 'IA',
+        }]
+      ])
+    );
     localStorage.removeItem('lineItems');
   };
 
@@ -189,7 +192,7 @@ function PurchaseOrder() {
       });
     }
     if (savedLineItems) {
-      setLineItems(JSON.parse(savedLineItems));
+      setLineItems(new Map(JSON.parse(savedLineItems)));
     }
   }, []);
 
