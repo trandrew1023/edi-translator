@@ -1,5 +1,8 @@
-import { React, useEffect, useState } from 'react';
-import dayjs from 'dayjs';
+import AddCommentIcon from '@mui/icons-material/AddComment';
+import CommentIcon from '@mui/icons-material/Comment';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import DownloadIcon from '@mui/icons-material/Download';
+import UpdateIcon from '@mui/icons-material/Update';
 import {
   Button,
   FormControl,
@@ -12,35 +15,35 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import AddCommentIcon from '@mui/icons-material/AddComment';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import CommentIcon from '@mui/icons-material/Comment';
-import DownloadIcon from '@mui/icons-material/Download';
-import UpdateIcon from '@mui/icons-material/Update';
-import { nanoid } from 'nanoid';
-import { to855 } from '../common/855Translator';
-import LineItems from './LineItems';
-import poAckTypeCodes from '../static/data/poAckTypeCodes.json';
 import { Box } from '@mui/system';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs from 'dayjs';
+import { nanoid } from 'nanoid';
+import { React, useEffect, useState } from 'react';
+import { to855 } from '../common/855Translator';
+import poAckTypeCodes from '../static/data/poAckTypeCodes.json';
 import CommentModal from './CommentModal';
+import LineItems from './LineItems';
 
 function PurchaseOrder() {
   const [lineItems, setLineItems] = useState(
     new Map([
-      [nanoid(), {
-        item: '',
-        description: '',
-        unitOfMeasure: 'EA',
-        orderedQuantity: '0',
-        acknowledgedQuantity: '0',
-        price: '0.00',
-        acknowledgementStatus: 'IA',
-      }]
-    ])
-  )
+      [
+        nanoid(),
+        {
+          item: '',
+          description: '',
+          unitOfMeasure: 'EA',
+          orderedQuantity: '0',
+          acknowledgedQuantity: '0',
+          price: '0.00',
+          acknowledgementStatus: 'IA',
+        },
+      ],
+    ]),
+  );
 
   const [text, setText] = useState(``);
   const [purchaseOrder, setPurchaseOrder] = useState({
@@ -146,16 +149,19 @@ function PurchaseOrder() {
     });
     setLineItems(
       new Map([
-        [nanoid(), {
-          item: '',
-          description: '',
-          unitOfMeasure: 'EA',
-          orderedQuantity: '0',
-          acknowledgedQuantity: '0',
-          price: '0.00',
-          acknowledgementStatus: 'IA',
-        }]
-      ])
+        [
+          nanoid(),
+          {
+            item: '',
+            description: '',
+            unitOfMeasure: 'EA',
+            orderedQuantity: '0',
+            acknowledgedQuantity: '0',
+            price: '0.00',
+            acknowledgementStatus: 'IA',
+          },
+        ],
+      ]),
     );
     localStorage.removeItem('purchaseOrder');
     localStorage.removeItem('lineItems');
@@ -166,16 +172,19 @@ function PurchaseOrder() {
     setLineItemErrors(new Map());
     setLineItems(
       new Map([
-        [nanoid(), {
-          item: '',
-          description: '',
-          unitOfMeasure: 'EA',
-          orderedQuantity: '0',
-          acknowledgedQuantity: '0',
-          price: '0.00',
-          acknowledgementStatus: 'IA',
-        }]
-      ])
+        [
+          nanoid(),
+          {
+            item: '',
+            description: '',
+            unitOfMeasure: 'EA',
+            orderedQuantity: '0',
+            acknowledgedQuantity: '0',
+            price: '0.00',
+            acknowledgementStatus: 'IA',
+          },
+        ],
+      ]),
     );
     localStorage.removeItem('lineItems');
   };
@@ -192,7 +201,11 @@ function PurchaseOrder() {
       });
     }
     if (savedLineItems) {
-      setLineItems(new Map(JSON.parse(savedLineItems)));
+      const savedLineItemsMap = new Map(JSON.parse(savedLineItems));
+      if (!savedLineItemsMap.has(undefined)) {
+        // set if parsing was done correctly
+        setLineItems(savedLineItemsMap);
+      }
     }
   }, []);
 
