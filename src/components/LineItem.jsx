@@ -1,3 +1,6 @@
+import AddCommentIcon from '@mui/icons-material/AddComment';
+import CommentIcon from '@mui/icons-material/Comment';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import {
   FormControl,
   Grid,
@@ -8,16 +11,18 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { React } from 'react';
 import PropTypes from 'prop-types';
-import AddCommentIcon from '@mui/icons-material/AddComment';
-import CommentIcon from '@mui/icons-material/Comment';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import { React, useState } from 'react';
 import poLineStatusCodes from '../static/data/poLineStatusCodes.json';
-import { useState } from 'react';
 import CommentModal from './CommentModal';
 
-function LineItem({ lineItem, lineItemError, mapID, removeLineItem, updateLineItem }) {
+function LineItem({
+  lineItem,
+  lineItemError,
+  mapID,
+  removeLineItem,
+  updateLineItem,
+}) {
   const [commentModalOpen, setCommentModalOpen] = useState(false);
   const handleEventChange = (event, prop) => {
     updateLineItem(mapID, prop, event.target.value);
