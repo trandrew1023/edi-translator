@@ -20,7 +20,7 @@ import PropTypes from 'prop-types';
 import { React, useState } from 'react';
 import poLineStatusCodes from '../static/data/poLineStatusCodes.json';
 import CommentModal from './CommentModal';
-import { InfoOutlined, KeyboardArrowDown } from '@mui/icons-material';
+import { InfoOutlined, KeyboardArrowDown, KeyboardArrowRight } from '@mui/icons-material';
 
 function LineItem({
   index,
@@ -43,7 +43,7 @@ function LineItem({
 
   return (
     <Box>
-      <Button variant='text' onClick={handleLineItemCollapse} endIcon={<KeyboardArrowDown />}>{`Line Item: ${index}`}</Button>
+      <Button variant='text' onClick={handleLineItemCollapse} endIcon={open ? <KeyboardArrowDown /> : <KeyboardArrowRight />}>{`Line Item: ${index}`}</Button>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <Grid container spacing={2} mb={4}>
           <Grid item md={4}>
