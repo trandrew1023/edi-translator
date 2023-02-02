@@ -1,8 +1,10 @@
+import { KeyboardArrowDown } from '@mui/icons-material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { Grid, IconButton, Typography } from '@mui/material';
+import { Button, Collapse, Grid, IconButton, Typography } from '@mui/material';
 import { ListItem, List } from '@mui/material'; //TODO MAKE SURE TO CHANGE THIS IMPORT
 import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { React } from 'react';
 import LineItem from './LineItem';
 
@@ -34,6 +36,12 @@ function LineItems({ lineItems, lineItemErrors, setLineItems }) {
     setLineItems(newLineItems);
   };
 
+  const [open, setOpen] = useState(true);
+
+  const handleLineItemCollapse = () => {
+    setOpen(!open);
+  }
+
   return (
     <Grid container>
       <Grid item xs={12}>
@@ -43,14 +51,16 @@ function LineItems({ lineItems, lineItemErrors, setLineItems }) {
           {lineItems && Array.from(lineItems).map(([key, lineItem], index) => (
             <ListItem key={key} disableGutters>
               <div>
-                <h1>{`Line Item: ${index}`}</h1>
-                <LineItem
-                lineItem={lineItem}
-                lineItemError={lineItemErrors.get(key)}
-                mapID={key}
-                removeLineItem={removeLineItem}
-                updateLineItem={updateLineItem}
+                <Button variant='text' onClick={handleLineItemCollapse} endIcon={<KeyboardArrowDown />}>{`Line Item: ${index}`}</Button>
+                <Collapse in={open} timeout="auto" unmountOnExit>
+                  <LineItem
+                  lineItem={lineItem}
+                  lineItemError={lineItemErrors.get(key)}
+                  mapID={key}
+                  removeLineItem={removeLineItem}
+                  updateLineItem={updateLineItem}
                 />
+                </Collapse>
               </div>
             </ListItem>
           ))}
