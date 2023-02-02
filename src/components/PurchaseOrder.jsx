@@ -106,7 +106,8 @@ function PurchaseOrder() {
           orderedQuantity: true,
         });
       }
-      if (!lineItem.price) {
+      //regex only accepts positive integers or decimal numbers up to 2 decimal places of precision [EX. 234, 12.8, 1.99, 15342523, 0.76]
+      if (!lineItem.price || !(/^[0-9]*(\.[0-9]{1,2})?$/.test(lineItem.price))) {
         checkLineItemErrors.set(key, {
           ...checkLineItemErrors.get(key),
           price: true,

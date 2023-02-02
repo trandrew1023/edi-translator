@@ -5,16 +5,19 @@ import {
   FormControl,
   Grid,
   IconButton,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Select,
   TextField,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { React, useState } from 'react';
 import poLineStatusCodes from '../static/data/poLineStatusCodes.json';
 import CommentModal from './CommentModal';
+import { InfoOutlined } from '@mui/icons-material';
 
 function LineItem({
   lineItem,
@@ -86,6 +89,15 @@ function LineItem({
           label="Price"
           value={lineItem.price}
           onChange={(event) => handleEventChange(event, 'price')}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <Tooltip title="must be a number" arrow>
+                  <InfoOutlined />
+                </Tooltip>
+              </InputAdornment>
+            )
+          }}
         />
       </Grid>
       <Grid item xs={4}>
