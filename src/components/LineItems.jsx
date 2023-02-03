@@ -53,16 +53,6 @@ function LineItems({ lineItems, lineItemErrors, setLineItems }) {
             </ListItem>
           ))}
         </List>
-        {/* {lineItems && Array.from(lineItems).map(([key, lineItem]) => (
-              <LineItem
-              key={key}
-              lineItem={lineItem}
-              lineItemError={lineItemErrors.get(key)}
-              mapID={key}
-              removeLineItem={removeLineItem}
-              updateLineItem={updateLineItem}
-            />
-          ))} */}
       <Grid item xs={12}>
         <IconButton onClick={handleAddLineItem}>
           <AddCircleIcon sx={{ color: 'green' }} />
