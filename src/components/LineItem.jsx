@@ -44,7 +44,7 @@ function LineItem({
   return (
     <Box>
       <Button variant='text' onClick={handleLineItemCollapse} endIcon={open ? <KeyboardArrowDown /> : <KeyboardArrowRight />}>{`Line Item: ${index + 1}`}</Button>
-      <Collapse in={open} timeout="auto" unmountOnExit>
+      <Collapse in={open} sx={{paddingTop: '10px'}} timeout="auto" unmountOnExit>
         <Grid container spacing={2} mb={4}>
           <Grid item md={4}>
             <TextField
