@@ -1,6 +1,5 @@
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { Grid, IconButton, Typography } from '@mui/material';
-import { ListItem, List } from '@mui/material'; //TODO MAKE SURE TO CHANGE THIS IMPORT
+import { Grid, IconButton, Typography, ListItem, List } from '@mui/material';
 import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 import { React } from 'react';
