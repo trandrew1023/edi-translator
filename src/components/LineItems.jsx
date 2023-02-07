@@ -1,5 +1,5 @@
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { Grid, IconButton, Typography } from '@mui/material';
+import { Grid, IconButton, Typography, ListItem, List } from '@mui/material';
 import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 import { React } from 'react';
@@ -38,17 +38,20 @@ function LineItems({ lineItems, lineItemErrors, setLineItems }) {
       <Grid item xs={12}>
         <Typography variant="h4">Line Items</Typography>
       </Grid>
-      {lineItems &&
-        Array.from(lineItems).map(([key, lineItem]) => (
-          <LineItem
-            key={key}
-            lineItem={lineItem}
-            lineItemError={lineItemErrors.get(key)}
-            mapID={key}
-            removeLineItem={removeLineItem}
-            updateLineItem={updateLineItem}
-          />
-        ))}
+        <List>
+          {lineItems && Array.from(lineItems).map(([key, lineItem], index) => (
+            <ListItem key={key} disableGutters>
+              <LineItem
+                index={index}
+                lineItem={lineItem}
+                lineItemError={lineItemErrors.get(key)}
+                mapID={key}
+                removeLineItem={removeLineItem}
+                updateLineItem={updateLineItem}
+              />
+            </ListItem>
+          ))}
+        </List>
       <Grid item xs={12}>
         <IconButton onClick={handleAddLineItem}>
           <AddCircleIcon sx={{ color: 'green' }} />
