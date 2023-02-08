@@ -135,11 +135,9 @@ function PurchaseOrder() {
     };
     setPurchaseOrder(updatedPurchaseOrder);
     handleSaveWithParams(updatedPurchaseOrder, lineItems);
-    console.log(updatedPurchaseOrder);
     let submittedPurchaseOrder = to855(updatedPurchaseOrder, lineItems);
     const file = new Blob([submittedPurchaseOrder], { type: 'text/plain' });
     setFileDownload(window.URL.createObjectURL(file));
-    console.log(submittedPurchaseOrder);
     setText(submittedPurchaseOrder);
   };
 
