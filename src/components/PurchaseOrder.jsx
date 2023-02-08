@@ -5,7 +5,9 @@ import DownloadIcon from '@mui/icons-material/Download';
 import UpdateIcon from '@mui/icons-material/Update';
 import {
   Button,
+  Checkbox,
   FormControl,
+  FormControlLabel,
   Grid,
   IconButton,
   InputLabel,
@@ -62,6 +64,8 @@ function PurchaseOrder() {
   const [lineItemErrors, setLineItemErrors] = useState(new Map());
   const [fileDownload, setFileDownload] = useState('');
   const [commentModalOpen, setCommentModalOpen] = useState(false);
+  const [poDateChecked, setPoDateChecked] = useState(false);
+  const [ackDateChecked, setAckDateChecked] = useState(false);
 
   const handleAckDateChange = (newValue) => {
     setPurchaseOrder({ ...purchaseOrder, ackDate: newValue });
@@ -107,7 +111,7 @@ function PurchaseOrder() {
         });
       }
       //regex only accepts positive integers or decimal numbers up to 2 decimal places of precision [EX. 234, 12.8, 1.99, 15342523, 0.76]
-      if (!lineItem.price || !(/^[0-9]*(\.[0-9]{1,2})?$/.test(lineItem.price))) {
+      if (!lineItem.price || !/^[0-9]*(\.[0-9]{1,2})?$/.test(lineItem.price)) {
         checkLineItemErrors.set(key, {
           ...checkLineItemErrors.get(key),
           price: true,
@@ -124,7 +128,14 @@ function PurchaseOrder() {
       hasErrors = true;
     }
     if (hasErrors) return;
-    let submittedPurchaseOrder = to855(purchaseOrder, lineItems);
+    const updatedPurchaseOrder = {
+      ...purchaseOrder,
+      ...(ackDateChecked && { ackDate: dayjs(new Date()) }),
+      ...(poDateChecked && { poDate: dayjs(new Date()) }),
+    };
+    setPurchaseOrder(updatedPurchaseOrder);
+    handleSaveWithParams(updatedPurchaseOrder, lineItems);
+    let submittedPurchaseOrder = to855(updatedPurchaseOrder, lineItems);
     const file = new Blob([submittedPurchaseOrder], { type: 'text/plain' });
     setFileDownload(window.URL.createObjectURL(file));
     setText(submittedPurchaseOrder);
@@ -133,6 +144,11 @@ function PurchaseOrder() {
   const handleSave = () => {
     localStorage.setItem('purchaseOrder', JSON.stringify(purchaseOrder));
     localStorage.setItem('lineItems', JSON.stringify([...lineItems]));
+  };
+
+  const handleSaveWithParams = (purchaseOrderToSave, lineItemsToSave) => {
+    localStorage.setItem('purchaseOrder', JSON.stringify(purchaseOrderToSave));
+    localStorage.setItem('lineItems', JSON.stringify([...lineItemsToSave]));
   };
 
   const handleReset = () => {
@@ -190,9 +206,23 @@ function PurchaseOrder() {
     localStorage.removeItem('lineItems');
   };
 
+  const handlePoDateChecked = () => {
+    const newPoDateChecked = !poDateChecked;
+    setPoDateChecked(newPoDateChecked);
+    localStorage.setItem('poDateChecked', newPoDateChecked);
+  };
+
+  const handleAckDateChecked = () => {
+    const newAckDateChecked = !ackDateChecked;
+    setAckDateChecked(newAckDateChecked);
+    localStorage.setItem('ackDateChecked', newAckDateChecked);
+  };
+
   useEffect(() => {
     let savedPurchaseOrder = localStorage.getItem('purchaseOrder');
     const savedLineItems = localStorage.getItem('lineItems');
+    const savedPoDateChecked = localStorage.getItem('poDateChecked');
+    const savedAckDateChcked = localStorage.getItem('ackDateChecked');
     if (savedPurchaseOrder) {
       savedPurchaseOrder = JSON.parse(savedPurchaseOrder);
       setPurchaseOrder({
@@ -207,6 +237,12 @@ function PurchaseOrder() {
         // set if parsing was done correctly
         setLineItems(savedLineItemsMap);
       }
+    }
+    if (savedPoDateChecked) {
+      setPoDateChecked(savedPoDateChecked === 'true');
+    }
+    if (savedAckDateChcked) {
+      setAckDateChecked(savedAckDateChcked === 'true');
     }
   }, []);
 
@@ -277,6 +313,12 @@ function PurchaseOrder() {
         <IconButton onClick={() => handlePoDateChange(dayjs(new Date()))}>
           <UpdateIcon />
         </IconButton>
+        <FormControlLabel
+          control={
+            <Checkbox checked={poDateChecked} onChange={handlePoDateChecked} />
+          }
+          label="Update on submit"
+        />
       </Grid>
       <Grid item md={4}>
         <FormControl fullWidth>
@@ -308,6 +350,15 @@ function PurchaseOrder() {
         <IconButton onClick={() => handleAckDateChange(dayjs(new Date()))}>
           <UpdateIcon />
         </IconButton>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={ackDateChecked}
+              onChange={handleAckDateChecked}
+            />
+          }
+          label="Update on submit"
+        />
       </Grid>
       <Grid item md={4}>
         <IconButton onClick={() => setCommentModalOpen(true)}>

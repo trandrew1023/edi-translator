@@ -1,5 +1,5 @@
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { Grid, IconButton, Typography, ListItem, List } from '@mui/material';
+import { Grid, IconButton, List, ListItem, Typography } from '@mui/material';
 import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 import { React } from 'react';
@@ -38,8 +38,9 @@ function LineItems({ lineItems, lineItemErrors, setLineItems }) {
       <Grid item xs={12}>
         <Typography variant="h4">Line Items</Typography>
       </Grid>
-        <List>
-          {lineItems && Array.from(lineItems).map(([key, lineItem], index) => (
+      <List>
+        {lineItems &&
+          Array.from(lineItems).map(([key, lineItem], index) => (
             <ListItem key={key} disableGutters>
               <LineItem
                 index={index}
@@ -51,7 +52,7 @@ function LineItems({ lineItems, lineItemErrors, setLineItems }) {
               />
             </ListItem>
           ))}
-        </List>
+      </List>
       <Grid item xs={12}>
         <IconButton onClick={handleAddLineItem}>
           <AddCircleIcon sx={{ color: 'green' }} />
