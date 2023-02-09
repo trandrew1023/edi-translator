@@ -363,6 +363,11 @@ function PurchaseOrder() {
       <Grid item md={4}>
         <IconButton onClick={() => setCommentModalOpen(true)}>
           {purchaseOrder.headerComment ? <CommentIcon /> : <AddCommentIcon />}
+          <Typography ml={1}>
+            {purchaseOrder.headerComment
+              ? 'Edit header comment'
+              : 'Add header comment'}
+          </Typography>
         </IconButton>
       </Grid>
       <Grid item xs={12}>

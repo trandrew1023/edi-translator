@@ -123,7 +123,7 @@ function LineItem({
                 endAdornment: (
                   <InputAdornment position="end">
                     <Tooltip
-                      title="Must be numeric with up to 2 decimal values"
+                      title="Must be numeric with up to 2 decimal values (no symbols)"
                       arrow
                       sx={{
                         cursor: 'pointer',
@@ -163,6 +163,9 @@ function LineItem({
           <Grid item md={4}>
             <IconButton onClick={() => setCommentModalOpen(true)}>
               {lineItem.comment ? <CommentIcon /> : <AddCommentIcon />}
+              <Typography ml={1}>
+                {lineItem.comment ? 'Edit comment' : 'Add comment'}
+              </Typography>
             </IconButton>
           </Grid>
           <Grid item xs={12}>
