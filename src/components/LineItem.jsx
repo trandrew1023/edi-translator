@@ -51,7 +51,9 @@ function LineItem({
         variant="text"
         onClick={handleLineItemCollapse}
         startIcon={open ? <KeyboardArrowDown /> : <KeyboardArrowRight />}
-      >{`Line Item: ${index + 1} (${lineItem.item})`}</Button>
+      >
+        {`${index + 1}: ` + (lineItem.item ? `(${lineItem.item})` : '')}
+      </Button>
       <Collapse
         in={open}
         sx={{ paddingTop: '10px' }}
@@ -120,7 +122,13 @@ function LineItem({
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <Tooltip title="must be a number" arrow>
+                    <Tooltip
+                      title="Must be numeric with up to 2 decimal values (no symbols)"
+                      arrow
+                      sx={{
+                        cursor: 'pointer',
+                      }}
+                    >
                       <InfoOutlined />
                     </Tooltip>
                   </InputAdornment>
@@ -155,6 +163,9 @@ function LineItem({
           <Grid item md={4}>
             <IconButton onClick={() => setCommentModalOpen(true)}>
               {lineItem.comment ? <CommentIcon /> : <AddCommentIcon />}
+              <Typography ml={1}>
+                {lineItem.comment ? 'Edit comment' : 'Add comment'}
+              </Typography>
             </IconButton>
           </Grid>
           <Grid item xs={12}>

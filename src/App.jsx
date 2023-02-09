@@ -1,5 +1,5 @@
-import { React, useState } from 'react';
-import './App.css';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness4OutlinedIcon from '@mui/icons-material/Brightness4Outlined';
 import {
   Box,
   FormControl,
@@ -8,18 +8,20 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Typography
+  Typography,
 } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness4OutlinedIcon from '@mui/icons-material/Brightness4Outlined';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { React, useEffect, useState } from 'react';
+import './App.css';
 import PurchaseOrder from './components/PurchaseOrder';
 
 function App() {
   const [form, selectForm] = useState(0);
   const [darkMode, setDarkMode] = useState(
-    localStorage.getItem('dark-mode-pref') === null ? 'light' : localStorage.getItem('dark-mode-pref'),
+    localStorage.getItem('dark-mode-pref') === null
+      ? 'light'
+      : localStorage.getItem('dark-mode-pref'),
   );
   const theme = createTheme({
     palette: {
@@ -39,8 +41,17 @@ function App() {
   };
 
   const handleFormChange = (event) => {
-    selectForm(event.target.value)
-  }
+    const selectedForm = event.target.value;
+    selectForm(selectedForm);
+    localStorage.setItem('lastForm', selectedForm);
+  };
+
+  useEffect(() => {
+    const lastForm = localStorage.getItem('lastForm');
+    if (lastForm) {
+      selectForm(lastForm);
+    }
+  });
 
   return (
     <ThemeProvider theme={theme}>
@@ -54,13 +65,9 @@ function App() {
           minHeight: '100vh',
         }}
       >
-        <Grid
-          container
-          spacing={2}
-          maxWidth='md'
-        >
+        <Grid container spacing={2} maxWidth="md">
           <Grid item xs={12}>
-            <Typography variant='h2'>EDI Translator</Typography>
+            <Typography variant="h2">EDI Translator</Typography>
             <IconButton
               onClick={() => toggleDarkMode()}
               sx={{
@@ -71,7 +78,11 @@ function App() {
                 marginTop: -9,
               }}
             >
-              {darkMode === 'light' ? <Brightness4Icon /> : <Brightness4OutlinedIcon />}
+              {darkMode === 'light' ? (
+                <Brightness4Icon />
+              ) : (
+                <Brightness4OutlinedIcon />
+              )}
             </IconButton>
           </Grid>
           <Grid item xs={4}>
