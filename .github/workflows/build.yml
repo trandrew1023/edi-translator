@@ -1,18 +1,21 @@
 name: Build
 
 on:
-  push:
-  pull_request:
-    branches:
-      - main
+  [pull_request]
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - run: git config --global user.email "andrewtran1023@live.com"
-      - run: git config --global user.name "Andrew Tran"
-      - run: git remote set-url origin https://${github_token}@github.com/${repository}
-      - run: npm install
-      - run: npm run build
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v3
+
+      - name: 🔧 Install
+        run: npm install
+
+      - name: 🏗️ Build
+        run: npm run build
