@@ -35,7 +35,7 @@ export default function ProfileModal({
   const signInWithGoogle = () => {
     signInWithPopup(auth, googleAuthProvider)
       .then((result) => {
-        const credential = GoogleAuthProvider.credentialFromResult(result);
+        // const credential = GoogleAuthProvider.credentialFromResult(result);
         // const token = credential?.accessToken;
         const user = result.user;
         setUser(user);
