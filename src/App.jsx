@@ -1,6 +1,8 @@
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness4OutlinedIcon from '@mui/icons-material/Brightness4Outlined';
 import {
+  AppBar,
+  Avatar,
   Box,
   FormControl,
   Grid,
@@ -8,35 +10,41 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Toolbar,
   Typography,
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Container } from '@mui/system';
+import { onAuthStateChanged } from 'firebase/auth';
 import { React, useEffect, useState } from 'react';
 import './App.css';
+import { auth } from './common/Firebase';
+import ProfileModal from './components/ProfileModal';
 import PurchaseOrder from './components/PurchaseOrder';
 
 function App() {
+  const themePref = localStorage.getItem('dark-mode-pref');
   const [form, selectForm] = useState(0);
-  const [darkMode, setDarkMode] = useState(
-    localStorage.getItem('dark-mode-pref') === null
-      ? 'light'
-      : localStorage.getItem('dark-mode-pref'),
-  );
+  const [darkMode, setDarkMode] = useState(themePref === 'dark');
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [profileImg, setProfileImg] = useState('');
+
   const theme = createTheme({
     palette: {
-      mode: darkMode,
+      mode: darkMode ? 'dark' : 'light',
       primary: {
-        main: darkMode === 'dark' ? grey[100] : grey[900],
+        main: darkMode ? grey[100] : grey[900],
       },
       secondary: {
-        main: darkMode === 'dark' ? grey[100] : grey[900],
+        main: darkMode ? grey[100] : grey[900],
       },
     },
   });
+
   const toggleDarkMode = () => {
-    const newMode = darkMode === 'dark' ? 'light' : 'dark';
-    setDarkMode(newMode);
+    const newMode = darkMode ? 'light' : 'dark';
+    setDarkMode(!darkMode);
     localStorage.setItem('dark-mode-pref', newMode);
   };
 
@@ -46,15 +54,51 @@ function App() {
     localStorage.setItem('lastForm', selectedForm);
   };
 
+  const handleProfileClick = () => {
+    setProfileModalOpen(!profileModalOpen);
+  };
+
   useEffect(() => {
     const lastForm = localStorage.getItem('lastForm');
     if (lastForm) {
       selectForm(lastForm);
     }
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setProfileImg(user.photoURL);
+      } else {
+        setProfileImg('');
+      }
+    });
   });
 
   return (
     <ThemeProvider theme={theme}>
+      <AppBar
+        position="static"
+        sx={{
+          color: darkMode ? 'white' : 'black',
+          background: darkMode ? '#808080' : '#D3D3D3',
+        }}
+      >
+        <Container maxWidth="xl">
+          <Toolbar disableGutters>
+            <Typography sx={{ flexGrow: 1 }}>EDI Translator</Typography>
+            <Box sx={{ flexGrow: 0 }}>
+              <IconButton onClick={toggleDarkMode}>
+                {darkMode === 'light' ? (
+                  <Brightness4Icon />
+                ) : (
+                  <Brightness4OutlinedIcon />
+                )}
+              </IconButton>
+              <IconButton onClick={handleProfileClick}>
+                {profileImg ? <Avatar src={profileImg} /> : <Avatar />}
+              </IconButton>
+            </Box>
+          </Toolbar>
+        </Container>
+      </AppBar>
       <Box
         sx={{
           display: 'flex',
@@ -65,28 +109,22 @@ function App() {
           minHeight: '100vh',
         }}
       >
-        <Grid container spacing={2} maxWidth="md">
-          <Grid item xs={12}>
-            <Typography variant="h2">EDI Translator</Typography>
-            <IconButton
-              onClick={() => toggleDarkMode()}
-              sx={{
-                // position: 'fixed',
-                // right: 0,
-                marginLeft: 'auto',
-                float: 'right',
-                marginTop: -9,
-              }}
-            >
-              {darkMode === 'light' ? (
-                <Brightness4Icon />
-              ) : (
-                <Brightness4OutlinedIcon />
-              )}
-            </IconButton>
-          </Grid>
-          <Grid item xs={4}>
-            <FormControl fullWidth>
+        <Grid
+          container
+          spacing={2}
+          maxWidth="md"
+          sx={{
+            m: 1,
+          }}
+        >
+          <Grid
+            item
+            xs={12}
+            sx={{
+              textAlign: 'center',
+            }}
+          >
+            <FormControl>
               <InputLabel>Form</InputLabel>
               <Select
                 labelId="edi-form-select-label"
@@ -102,10 +140,17 @@ function App() {
           </Grid>
           {form == 855004010 && (
             <Grid item xs={12}>
-              <PurchaseOrder></PurchaseOrder>
+              <PurchaseOrder />
             </Grid>
           )}
         </Grid>
+        {profileModalOpen && (
+          <ProfileModal
+            profileModalOpen={profileModalOpen}
+            setProfileModalOpen={setProfileModalOpen}
+            auth={auth}
+          />
+        )}
       </Box>
     </ThemeProvider>
   );
