@@ -1,6 +1,6 @@
 {
   "name": "edi-translator",
-  "version": "0.7.0",
+  "version": "0.6.5",
   "homepage": "https://trandrew1023.github.io/edi-translator",
   "private": true,
   "dependencies": {
@@ -14,7 +14,6 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "dayjs": "^1.11.7",
-    "firebase": "^9.17.1",
     "moment": "^2.29.4",
     "nanoid": "^4.0.0",
     "react": "^18.2.0",
