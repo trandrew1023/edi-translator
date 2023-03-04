@@ -18,6 +18,9 @@ jobs:
 
       - name: 🔧 Install
         run: npm install
+
+      - name: 🏗️ Build
+        run: npm run build
         env:
           REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
           REACT_APP_AUTH_DOMAIN: ${{ secrets.REACT_APP_AUTH_DOMAIN }}
@@ -26,9 +29,6 @@ jobs:
           REACT_APP_MESSENGER_ID: ${{ secrets.REACT_APP_MESSENGER_ID }}
           REACT_APP_APP_ID: ${{ secrets.REACT_APP_APP_ID}}
           REACT_APP_MEASUREMENT_ID: ${{ secrets.REACT_APP_MEASUREMENT_ID }}
-
-      - name: 🏗️ Build
-        run: npm run build
 
       - name: 🚀 Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
