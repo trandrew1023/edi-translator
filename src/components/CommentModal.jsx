@@ -1,7 +1,7 @@
-import { Box, Button, Grid, Modal, TextField, Typography } from '@mui/material';
-import { React } from 'react';
-import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { Box, Button, Grid, Modal, TextField, Typography } from "@mui/material";
+import { React } from "react";
+import PropTypes from "prop-types";
+import { useState } from "react";
 
 export default function CommentModal({
   commentModalOpen,
@@ -12,18 +12,6 @@ export default function CommentModal({
   target,
 }) {
   const [editComment, setEditComment] = useState(comment);
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '60%',
-    maxWidth: '300px',
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
 
   const handleSubmit = () => {
     setComment({ target: { value: editComment } }, target);
@@ -39,10 +27,10 @@ export default function CommentModal({
 
   return (
     <Modal open={commentModalOpen} onClose={() => setCommentModalOpen(false)}>
-      <Box component="form" sx={style}>
+      <Box component="form" sx={modalStyle}>
         <Grid container>
           <Grid item xs={12}>
-            <Typography sx={{ color: 'text.primary' }}>{header}</Typography>
+            <Typography sx={{ color: "text.primary" }}>{header}</Typography>
           </Grid>
           <Grid item xs={12}>
             <TextField
@@ -54,22 +42,22 @@ export default function CommentModal({
         </Grid>
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'flex-end',
+            display: "flex",
+            justifyContent: "flex-end",
             mt: 1,
           }}
         >
           <Button
             variant="contained"
             onClick={() => setCommentModalOpen(false)}
-            sx={{ mr: 1, backgroundColor: 'red' }}
+            sx={{ mr: 1, backgroundColor: "red" }}
           >
             <Typography>Cancel</Typography>
           </Button>
           <Button
             variant="contained"
             onClick={handleSubmit}
-            sx={{ backgroundColor: 'green' }}
+            sx={{ backgroundColor: "green" }}
           >
             <Typography>Submit</Typography>
           </Button>
