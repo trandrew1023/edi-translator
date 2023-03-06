@@ -1,6 +1,6 @@
 {
   "name": "edi-translator",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "homepage": "https://trandrew1023.github.io/edi-translator",
   "private": true,
   "dependencies": {

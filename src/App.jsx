@@ -20,8 +20,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { React, useEffect, useState } from 'react';
 import './App.css';
 import { auth } from './common/Firebase';
+import Form855 from './components/Form855';
 import ProfileModal from './components/ProfileModal';
-import PurchaseOrder from './components/PurchaseOrder';
 
 function App() {
   const themePref = localStorage.getItem('dark-mode-pref');
@@ -29,6 +29,7 @@ function App() {
   const [darkMode, setDarkMode] = useState(themePref === 'dark');
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [profileImg, setProfileImg] = useState('');
+  const [user, setUser] = useState(null);
 
   const theme = createTheme({
     palette: {
@@ -38,6 +39,11 @@ function App() {
       },
       secondary: {
         main: darkMode ? grey[100] : grey[900],
+      },
+    },
+    typography: {
+      button: {
+        fontWeight: 700,
       },
     },
   });
@@ -66,8 +72,10 @@ function App() {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         setProfileImg(user.photoURL);
+        setUser(user);
       } else {
         setProfileImg('');
+        setUser(null);
       }
     });
   });
@@ -75,15 +83,27 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <AppBar
-        position="static"
+        position="fixed"
         sx={{
           color: darkMode ? 'white' : 'black',
           background: darkMode ? '#808080' : '#D3D3D3',
         }}
       >
-        <Container maxWidth="xl">
+        <Container maxWidth="md">
           <Toolbar disableGutters>
-            <Typography sx={{ flexGrow: 1 }}>EDI Translator</Typography>
+            <Typography
+              onClick={() => {
+                scrollTo(0, 0);
+              }}
+              sx={{
+                flexGrow: 1,
+                '&:hover': {
+                  cursor: 'pointer',
+                },
+              }}
+            >
+              EDI Translator
+            </Typography>
             <Box sx={{ flexGrow: 0 }}>
               <IconButton onClick={toggleDarkMode}>
                 {darkMode === 'light' ? (
@@ -107,11 +127,11 @@ function App() {
           bgcolor: 'background.default',
           color: 'text.primary',
           minHeight: '100vh',
+          height: 'auto',
         }}
       >
         <Grid
           container
-          spacing={2}
           maxWidth="md"
           sx={{
             m: 1,
@@ -122,6 +142,7 @@ function App() {
             xs={12}
             sx={{
               textAlign: 'center',
+              mt: 10,
             }}
           >
             <FormControl>
@@ -140,7 +161,7 @@ function App() {
           </Grid>
           {form == 855004010 && (
             <Grid item xs={12}>
-              <PurchaseOrder />
+              <Form855 user={user} />
             </Grid>
           )}
         </Grid>
