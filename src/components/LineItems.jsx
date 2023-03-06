@@ -35,7 +35,7 @@ function LineItems({ lineItems, lineItemErrors, setLineItems }) {
 
   return (
     <Grid container>
-      <Grid item xs={12}>
+      <Grid item xs={12} mb={-3}>
         <Typography variant="h4">Line Items</Typography>
       </Grid>
       <List>
@@ -53,9 +53,9 @@ function LineItems({ lineItems, lineItemErrors, setLineItems }) {
             </ListItem>
           ))}
       </List>
-      <Grid item xs={12}>
+      <Grid item xs={12} sx={{ textAlign: 'center' }}>
         <IconButton onClick={handleAddLineItem}>
-          <AddCircleIcon sx={{ color: 'green' }} />
+          <AddCircleIcon sx={{ color: 'green', mr: 1 }} />
           <Typography>Add line item</Typography>
         </IconButton>
       </Grid>

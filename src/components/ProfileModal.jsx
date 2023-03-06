@@ -10,11 +10,11 @@ import {
 import 'firebase/compat/auth';
 import PropTypes from 'prop-types';
 import { React, useEffect, useState } from 'react';
+import { auth } from '../common/Firebase';
 
 export default function ProfileModal({
   profileModalOpen,
   setProfileModalOpen,
-  auth,
 }) {
   // Modal style
   const style = {
@@ -100,5 +100,4 @@ export default function ProfileModal({
 ProfileModal.propTypes = {
   profileModalOpen: PropTypes.bool.isRequired,
   setProfileModalOpen: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
 };

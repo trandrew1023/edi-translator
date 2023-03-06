@@ -170,7 +170,7 @@ function LineItem({
           </Grid>
           <Grid item xs={12}>
             <IconButton onClick={() => removeLineItem(mapID)}>
-              <RemoveCircleIcon sx={{ color: 'red' }} />
+              <RemoveCircleIcon sx={{ color: 'red', mr: 1 }} />
               <Typography>Remove line item</Typography>
             </IconButton>
           </Grid>
