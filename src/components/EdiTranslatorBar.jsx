@@ -9,7 +9,7 @@ import ProfileModal from './ProfileModal';
 /**
  * This component renders the EDI Translator App Bar.
  */
-export default function EdiTranslationBar({
+export default function EdiTranslatorBar({
   darkMode,
   profileImg = '',
   toggleDarkMode,
@@ -67,7 +67,7 @@ export default function EdiTranslationBar({
   );
 }
 
-EdiTranslationBar.propTypes = {
+EdiTranslatorBar.propTypes = {
   /**
    * If `true`, the app theme should be dark mode and the app bar will follow the theme.
    */

@@ -15,7 +15,7 @@ import { React, useEffect, useState } from 'react';
 import './App.css';
 import { ediTranslatorForms, FORMS } from './common/Constants';
 import { auth } from './common/Firebase';
-import EdiTranslationBar from './components/EdiTranslatorBar';
+import EdiTranslatorBar from './components/EdiTranslatorBar';
 import Form855 from './components/Form855';
 
 function App() {
@@ -108,7 +108,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <EdiTranslationBar
+      <EdiTranslatorBar
         darkMode={darkMode}
         profileImg={profileImg}
         toggleDarkMode={toggleDarkMode}
@@ -133,10 +133,15 @@ function App() {
         >
           {renderFormSelect()}
           {renderForm()}
-          <IconButton href="https://github.com/trandrew1023/edi-translator#readme">
-            <GitHubIcon />
-          </IconButton>
         </Grid>
+        <IconButton
+          href="https://github.com/trandrew1023/edi-translator#readme"
+          sx={{
+            alignSelf: 'flex-end',
+          }}
+        >
+          <GitHubIcon />
+        </IconButton>
       </Box>
     </ThemeProvider>
   );

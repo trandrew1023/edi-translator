@@ -19,7 +19,6 @@ export default function FormDrawer({
   closeFormDrawer,
   deleteForm,
   formDrawerOpen,
-  // getSavedForms,
   isLoading = false,
   openForm,
   savedForms,
@@ -33,10 +32,6 @@ export default function FormDrawer({
   const handleDeleteForm = (key, index) => {
     deleteForm(key, index);
   };
-
-  // useEffect(() => {
-  //   getSavedForms();
-  // }, []);
 
   return (
     <Drawer anchor="right" open={formDrawerOpen} onClose={closeFormDrawer}>
@@ -108,11 +103,6 @@ FormDrawer.propTypes = {
    * If `true`, the drawer is shown.
    */
   formDrawerOpen: PropTypes.bool.isRequired,
-  /**
-   * Callback function to kick-off the retrieval of the user's saved forms.
-   * TODO: this should be handled by the consumer and should just pass the forms.
-   */
-  // getSavedForms: PropTypes.func.isRequired,
   /**
    * If `true`, displays CircularProgress.
    *
