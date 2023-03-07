@@ -1,33 +1,26 @@
 import { Box, Button, Grid, Modal, TextField, Typography } from '@mui/material';
-import { React } from 'react';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { React, useState } from 'react';
+import { modalStyle } from '../common/Styles';
 
+/**
+ * This component opens a modal with a single text field that can be edited.
+ */
 export default function CommentModal({
+  closeOnSubmit = true,
+  comment = '',
   commentModalOpen,
-  setCommentModalOpen,
-  comment,
+  headerText = 'Comment',
   setComment,
-  header,
-  target,
+  setCommentModalOpen,
 }) {
-  const [editComment, setEditComment] = useState(comment);
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '60%',
-    maxWidth: '300px',
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
+  const [updatedComment, setUpdatedComment] = useState(comment);
 
   const handleSubmit = () => {
-    setComment({ target: { value: editComment } }, target);
-    setCommentModalOpen(false);
+    setComment(updatedComment);
+    if (closeOnSubmit) {
+      setCommentModalOpen(false);
+    }
   };
 
   const handleSubmitKeypress = (event) => {
@@ -39,15 +32,15 @@ export default function CommentModal({
 
   return (
     <Modal open={commentModalOpen} onClose={() => setCommentModalOpen(false)}>
-      <Box component="form" sx={style}>
+      <Box component="form" sx={modalStyle}>
         <Grid container>
           <Grid item xs={12}>
-            <Typography sx={{ color: 'text.primary' }}>{header}</Typography>
+            <Typography sx={{ color: 'text.primary' }}>{headerText}</Typography>
           </Grid>
           <Grid item xs={12}>
             <TextField
-              value={editComment}
-              onChange={(event) => setEditComment(event.target.value)}
+              value={updatedComment}
+              onChange={(event) => setUpdatedComment(event.target.value)}
               onKeyPress={handleSubmitKeypress}
             ></TextField>
           </Grid>
@@ -79,11 +72,41 @@ export default function CommentModal({
   );
 }
 
+CommentModal.defaultProps = {
+  closeOnSubmit: true,
+};
+
 CommentModal.propTypes = {
+  /**
+   * If `true`, the modal is closed on submit. Default is `true`.
+   *
+   * @default true
+   */
+  closeOnSubmit: PropTypes.bool,
+  /**
+   * The initial comment text. Default is empty string ''.
+   *
+   * @default ''
+   */
+  comment: PropTypes.string,
+  /**
+   * If `true`, the modal is shown.
+   */
   commentModalOpen: PropTypes.bool.isRequired,
-  setCommentModalOpen: PropTypes.func.isRequired,
-  comment: PropTypes.string.isRequired,
+  /**
+   * The modal text header displayed above the text field.
+   *
+   * @default 'Comment'
+   */
+  headerText: PropTypes.string,
+  /**
+   * Callback function to update the comment with new value.
+   *
+   * @param {string} updatedComment The updated comment.
+   */
   setComment: PropTypes.func.isRequired,
-  header: PropTypes.string.isRequired,
-  target: PropTypes.string.isRequired,
+  /**
+   * Callback function to toggle when the modal is shown.
+   */
+  setCommentModalOpen: PropTypes.func.isRequired,
 };

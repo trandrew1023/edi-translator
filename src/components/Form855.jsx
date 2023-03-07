@@ -8,7 +8,6 @@ import {
   Alert,
   Button,
   Checkbox,
-  Drawer,
   FormControl,
   FormControlLabel,
   Grid,
@@ -16,6 +15,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Slide,
   TextField,
   Tooltip,
   Typography,
@@ -39,13 +39,17 @@ import { React, useEffect, useState } from 'react';
 import { to855 } from '../common/855Translator';
 import { FORM_SAVE_RESPONSE } from '../common/Constants';
 import { db } from '../common/Firebase';
-import { alertStyle } from '../common/Styles';
+import { alertStyle, tempAlertStyle } from '../common/Styles';
 import poAckTypeCodes from '../static/data/poAckTypeCodes.json';
+import icon from '../static/images/chick.png';
 import CommentModal from './CommentModal';
 import FormDrawer from './FormDrawer';
 import LineItems from './LineItems';
 import SaveFormModal from './SaveFormModal';
 
+/**
+ * This component renders the form to modify and generate EDI 855 files.
+ */
 function Form855({ user }) {
   const [purchaseOrder, setPurchaseOrder] = useState({
     purchaseOrderNumber: '',
@@ -73,20 +77,27 @@ function Form855({ user }) {
       ],
     ]),
   );
-  const [text, setText] = useState(``);
-  const [toolTipOpen, setToolTipOpen] = useState(false);
-  const [saveToolTipOpen, setSaveToolTipOpen] = useState(false);
-  const [formErrors, setFormErrors] = useState({});
-  const [lineItemErrors, setLineItemErrors] = useState(new Map());
-  const [fileDownload, setFileDownload] = useState('');
-  const [commentModalOpen, setCommentModalOpen] = useState(false);
-  const [poDateChecked, setPoDateChecked] = useState(false);
   const [ackDateChecked, setAckDateChecked] = useState(false);
+  const [commentModalOpen, setCommentModalOpen] = useState(false);
+  const [fileDownload, setFileDownload] = useState('');
   const [formDrawerOpen, setFormDrawerOpen] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+  const [generatedText, setGeneratedText] = useState(``);
+  const [getSavedFormsLoading, setGetSavedFormsLoading] = useState(false);
+  const [lineItemErrors, setLineItemErrors] = useState(new Map());
+  const [poDateChecked, setPoDateChecked] = useState(false);
+  const [toolTipOpen, setToolTipOpen] = useState(false);
   const [savedFormKeys, changeSavedFormKeys] = useState([]);
   const [savedForms, changeSavedForms] = useState({});
   const [saveFormModalOpen, setSaveFormModalOpen] = useState(false);
+  const [saveToolTipOpen, setSaveToolTipOpen] = useState(false);
   const [successAlert, setSuccessAlert] = useState(false);
+  const [tempAlert, setTempAlert] = useState(false);
+
+  const handleTempAlert = () => {
+    setTempAlert(false);
+    localStorage.setItem('tempAlert-0.8.0', true);
+  };
 
   const handleAckDateChange = (newValue) => {
     setPurchaseOrder({ ...purchaseOrder, ackDate: newValue });
@@ -99,7 +110,7 @@ function Form855({ user }) {
   const handleSubmit = () => {
     setFormErrors({});
     setLineItemErrors(new Map());
-    setText(``);
+    setGeneratedText(``);
     handleSave();
     const checkForm = {};
     if (!purchaseOrder.purchaseOrderNumber) {
@@ -159,7 +170,7 @@ function Form855({ user }) {
     let submittedPurchaseOrder = to855(updatedPurchaseOrder, lineItems);
     const file = new Blob([submittedPurchaseOrder], { type: 'text/plain' });
     setFileDownload(window.URL.createObjectURL(file));
-    setText(submittedPurchaseOrder);
+    setGeneratedText(submittedPurchaseOrder);
   };
 
   const handleSave = () => {
@@ -266,7 +277,7 @@ function Form855({ user }) {
     if (reset) {
       setFormErrors({});
       setLineItemErrors(new Map());
-      setText(``);
+      setGeneratedText(``);
       setPurchaseOrder({
         purchaseOrderNumber: '',
         senderId: '',
@@ -335,6 +346,10 @@ function Form855({ user }) {
   };
 
   useEffect(() => {
+    const checkAlert = localStorage.getItem('tempAlert-0.8.0');
+    if (!checkAlert) {
+      setTempAlert(true);
+    }
     let savedPurchaseOrder = localStorage.getItem('purchaseOrder');
     const savedLineItems = localStorage.getItem('lineItems');
     const savedPoDateChecked = localStorage.getItem('poDateChecked');
@@ -374,8 +389,8 @@ function Form855({ user }) {
     setPurchaseOrder({ ...purchaseOrder, [param]: event.target.value });
   };
 
-  const openFormDrawer = () => {
-    setFormDrawerOpen(true);
+  const editPurchaseOrderHeaderComment = (updatedComment) => {
+    editPurchaseOrder({ target: { value: updatedComment } }, 'headerComment');
   };
 
   const closeFormDrawer = () => {
@@ -387,6 +402,9 @@ function Form855({ user }) {
   };
 
   const getSavedForms = async () => {
+    setGetSavedFormsLoading(true);
+    // TODO optimize to check if the the form has been updated compared to the
+    // current form to avoid extra document reads.
     if (user) {
       const savedFormsRef = doc(db, user.uid, 'savedForms');
       const savedFormsDoc = await getDoc(savedFormsRef);
@@ -400,6 +418,12 @@ function Form855({ user }) {
         changeSavedForms(data);
       }
     }
+    setGetSavedFormsLoading(false);
+  };
+
+  const openFormDrawer = () => {
+    getSavedForms();
+    setFormDrawerOpen(true);
   };
 
   const openForm = (key) => {
@@ -410,6 +434,7 @@ function Form855({ user }) {
         const data = docSnap.data();
         setPurchaseOrder(JSON.parse(data.purchaseOrder));
         setLineItems(new Map(JSON.parse(data.lineItems)));
+        setGeneratedText('');
       }
     };
     fetch855Form();
@@ -564,7 +589,7 @@ function Form855({ user }) {
           <Typography variant="h4">Generated 855 file text</Typography>
           <Box sx={{ border: 1 }}>
             <Typography sx={{ wordBreak: 'break-word' }}>
-              {text.replace(/ /g, '\u00A0')}
+              {generatedText.replace(/ /g, '\u00A0')}
             </Typography>
           </Box>
           <Tooltip
@@ -575,7 +600,7 @@ function Form855({ user }) {
           >
             <IconButton
               onClick={() => {
-                navigator.clipboard.writeText(text);
+                navigator.clipboard.writeText(generatedText);
                 setToolTipOpen(true);
               }}
               sx={{
@@ -693,16 +718,15 @@ function Form855({ user }) {
     <Grid container spacing={4}>
       {user && renderSavedFormsButton()}
       {renderPurchaseOrderHeader()}
-      {text && renderGeneratedText()}
+      {generatedText && renderGeneratedText()}
       {renderFormButtons()}
       {commentModalOpen && (
         <CommentModal
-          commentModalOpen={commentModalOpen}
-          setCommentModalOpen={setCommentModalOpen}
           comment={purchaseOrder.headerComment}
-          setComment={editPurchaseOrder}
-          header={'Header Comment'}
-          target={'headerComment'}
+          commentModalOpen={commentModalOpen}
+          headerText={'Header Comment'}
+          setComment={editPurchaseOrderHeaderComment}
+          setCommentModalOpen={setCommentModalOpen}
         />
       )}
       {saveFormModalOpen && (
@@ -716,16 +740,46 @@ function Form855({ user }) {
           saveFormOverwrite={handleFormOverwrite}
         />
       )}
-      <Drawer anchor="right" open={formDrawerOpen} onClose={closeFormDrawer}>
+      {formDrawerOpen && (
         <FormDrawer
           closeFormDrawer={closeFormDrawer}
-          openForm={openForm}
-          savedFormKeys={savedFormKeys}
-          savedForms={savedForms}
-          getSavedForms={getSavedForms}
           deleteForm={handleFormDelete}
+          formDrawerOpen={formDrawerOpen}
+          isLoading={getSavedFormsLoading}
+          openForm={openForm}
+          savedForms={savedForms}
+          savedFormKeys={savedFormKeys}
         />
-      </Drawer>
+      )}
+      {tempAlert && (
+        <Grid item xs={12}>
+          <Slide direction="right" in={true} mountOnEnter unmountOnExit>
+            <Alert
+              style={tempAlertStyle}
+              onClose={() => {
+                handleTempAlert();
+              }}
+              severity="info"
+            >
+              Hi There!
+              <img src={icon} width={20} style={{ marginLeft: 10 }} />
+              <br />
+              <br />
+              Some new beta features have just been added! You can now log in
+              using your Google account to enable saving forms!
+              <br />
+              <br />
+              Please log any issues{' '}
+              <a href={'https://github.com/trandrew1023/edi-translator/issues'}>
+                here
+              </a>{' '}
+              <br />
+              <br />
+              Goodbye!
+            </Alert>
+          </Slide>
+        </Grid>
+      )}
     </Grid>
   );
 }
@@ -733,5 +787,11 @@ function Form855({ user }) {
 export default Form855;
 
 Form855.propTypes = {
+  /**
+   * The authenticated user. If user is logged in, enables features
+   * that require user authentication.
+   *
+   * @default null
+   */
   user: PropTypes.object,
 };

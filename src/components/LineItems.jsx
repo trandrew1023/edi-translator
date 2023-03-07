@@ -46,7 +46,7 @@ function LineItems({ lineItems, lineItemErrors, setLineItems }) {
                 index={index}
                 lineItem={lineItem}
                 lineItemError={lineItemErrors.get(key)}
-                mapID={key}
+                lineItemKey={key}
                 removeLineItem={removeLineItem}
                 updateLineItem={updateLineItem}
               />

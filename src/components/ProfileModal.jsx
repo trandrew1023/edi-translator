@@ -11,32 +11,22 @@ import 'firebase/compat/auth';
 import PropTypes from 'prop-types';
 import { React, useEffect, useState } from 'react';
 import { auth } from '../common/Firebase';
+import { modalStyle } from '../common/Styles';
 
+/**
+ * This component opens a modal that displays the authenticated user with actions
+ * to log in or log out.
+ */
 export default function ProfileModal({
   profileModalOpen,
   setProfileModalOpen,
 }) {
-  // Modal style
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '60%',
-    maxWidth: '300px',
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
   const [user, setUser] = useState(null);
   const googleAuthProvider = new GoogleAuthProvider();
 
   const signInWithGoogle = () => {
     signInWithPopup(auth, googleAuthProvider)
       .then((result) => {
-        // const credential = GoogleAuthProvider.credentialFromResult(result);
-        // const token = credential?.accessToken;
         const user = result.user;
         setUser(user);
       })
@@ -75,7 +65,7 @@ export default function ProfileModal({
 
   return (
     <Modal open={profileModalOpen} onClose={() => setProfileModalOpen(false)}>
-      <Box component="form" sx={style}>
+      <Box component="form" sx={modalStyle}>
         {user ? (
           <>
             <Typography variant="h6" color="textPrimary">
@@ -98,6 +88,12 @@ export default function ProfileModal({
 }
 
 ProfileModal.propTypes = {
+  /**
+   * If `true`, the modal is shown.
+   */
   profileModalOpen: PropTypes.bool.isRequired,
+  /**
+   * Callback function to toggle when the modal is shown.
+   */
   setProfileModalOpen: PropTypes.func.isRequired,
 };
