@@ -132,15 +132,15 @@ function App() {
         >
           {renderFormSelect()}
           {renderForm()}
+          <IconButton
+            href="https://github.com/trandrew1023/edi-translator#readme"
+            sx={{
+              alignSelf: 'flex-end',
+            }}
+          >
+            <GitHubIcon />
+          </IconButton>
         </Grid>
-        <IconButton
-          href="https://github.com/trandrew1023/edi-translator#readme"
-          sx={{
-            alignSelf: 'flex-end',
-          }}
-        >
-          <GitHubIcon />
-        </IconButton>
       </Box>
     </ThemeProvider>
   );
