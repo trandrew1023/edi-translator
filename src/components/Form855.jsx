@@ -82,7 +82,7 @@ function Form855({ user }) {
   const [fileDownload, setFileDownload] = useState('');
   const [formDrawerOpen, setFormDrawerOpen] = useState(false);
   const [formErrors, setFormErrors] = useState({});
-  const [generatedText, setGeneratedText] = useState(``);
+  const [generatedText, setGeneratedText] = useState('');
   const [getSavedFormsLoading, setGetSavedFormsLoading] = useState(false);
   const [lineItemErrors, setLineItemErrors] = useState(new Map());
   const [poDateChecked, setPoDateChecked] = useState(false);
@@ -107,10 +107,20 @@ function Form855({ user }) {
     setPurchaseOrder({ ...purchaseOrder, poDate: newValue });
   };
 
+  const handleSave = () => {
+    localStorage.setItem('purchaseOrder', JSON.stringify(purchaseOrder));
+    localStorage.setItem('lineItems', JSON.stringify([...lineItems]));
+  };
+
+  const handleSaveWithParams = (purchaseOrderToSave, lineItemsToSave) => {
+    localStorage.setItem('purchaseOrder', JSON.stringify(purchaseOrderToSave));
+    localStorage.setItem('lineItems', JSON.stringify([...lineItemsToSave]));
+  };
+
   const handleSubmit = () => {
     setFormErrors({});
     setLineItemErrors(new Map());
-    setGeneratedText(``);
+    setGeneratedText('');
     handleSave();
     const checkForm = {};
     if (!purchaseOrder.purchaseOrderNumber) {
@@ -142,7 +152,8 @@ function Form855({ user }) {
           orderedQuantity: true,
         });
       }
-      //regex only accepts positive integers or decimal numbers up to 2 decimal places of precision [EX. 234, 12.8, 1.99, 15342523, 0.76]
+      // regex only accepts positive integers or decimal numbers up to 2 decimal places of precision
+      // [EX. 234, 12.8, 1.99, 15342523, 0.76]
       if (!lineItem.price || !/^[0-9]*(\.[0-9]{1,2})?$/.test(lineItem.price)) {
         checkLineItemErrors.set(key, {
           ...checkLineItemErrors.get(key),
@@ -167,15 +178,10 @@ function Form855({ user }) {
     };
     setPurchaseOrder(updatedPurchaseOrder);
     handleSaveWithParams(updatedPurchaseOrder, lineItems);
-    let submittedPurchaseOrder = to855(updatedPurchaseOrder, lineItems);
+    const submittedPurchaseOrder = to855(updatedPurchaseOrder, lineItems);
     const file = new Blob([submittedPurchaseOrder], { type: 'text/plain' });
     setFileDownload(window.URL.createObjectURL(file));
     setGeneratedText(submittedPurchaseOrder);
-  };
-
-  const handleSave = () => {
-    localStorage.setItem('purchaseOrder', JSON.stringify(purchaseOrder));
-    localStorage.setItem('lineItems', JSON.stringify([...lineItems]));
   };
 
   const showSuccessfulSaveAlert = () => {
@@ -198,31 +204,30 @@ function Form855({ user }) {
     const docSnap = await getDoc(formRef);
     if (docSnap.exists()) {
       return FORM_SAVE_RESPONSE.EXISTS;
-    } else {
-      const savedFormsDoc = await getDoc(savedFormsRef);
-      if (savedFormsDoc.exists()) {
-        await updateDoc(savedFormsRef, {
-          [name]: {
-            description: description,
-          },
-        });
-      } else {
-        await setDoc(savedFormsRef, {
-          [name]: {
-            description: description,
-          },
-        });
-      }
-      await setDoc(doc(db, user.uid, name), {
-        purchaseOrder: JSON.stringify(purchaseOrder),
-        lineItems: JSON.stringify([...lineItems]),
-        description: description,
-        createDate: new Date(),
-      });
-      handleSave();
-      showSuccessfulSaveAlert();
-      return FORM_SAVE_RESPONSE.SUCCESS;
     }
+    const savedFormsDoc = await getDoc(savedFormsRef);
+    if (savedFormsDoc.exists()) {
+      await updateDoc(savedFormsRef, {
+        [name]: {
+          description,
+        },
+      });
+    } else {
+      await setDoc(savedFormsRef, {
+        [name]: {
+          description,
+        },
+      });
+    }
+    await setDoc(doc(db, user.uid, name), {
+      purchaseOrder: JSON.stringify(purchaseOrder),
+      lineItems: JSON.stringify([...lineItems]),
+      description,
+      createDate: new Date(),
+    });
+    handleSave();
+    showSuccessfulSaveAlert();
+    return FORM_SAVE_RESPONSE.SUCCESS;
   };
 
   const handleFormOverwrite = async (name, description) => {
@@ -234,20 +239,20 @@ function Form855({ user }) {
     if (savedFormsDoc.exists()) {
       await updateDoc(savedFormsRef, {
         [name]: {
-          description: description,
+          description,
         },
       });
     } else {
       await setDoc(savedFormsRef, {
         [name]: {
-          description: description,
+          description,
         },
       });
     }
     await setDoc(doc(db, user.uid, name), {
       purchaseOrder: JSON.stringify(purchaseOrder),
       lineItems: JSON.stringify([...lineItems]),
-      description: description,
+      description,
       createDate: new Date(),
     });
     handleSave();
@@ -267,17 +272,12 @@ function Form855({ user }) {
     changeSavedForms(newSavedForms);
   };
 
-  const handleSaveWithParams = (purchaseOrderToSave, lineItemsToSave) => {
-    localStorage.setItem('purchaseOrder', JSON.stringify(purchaseOrderToSave));
-    localStorage.setItem('lineItems', JSON.stringify([...lineItemsToSave]));
-  };
-
   const handleReset = () => {
-    let reset = confirm('Are you sure you want to reset?');
+    const reset = window.location.confirm('Are you sure you want to reset?');
     if (reset) {
       setFormErrors({});
       setLineItemErrors(new Map());
-      setGeneratedText(``);
+      setGeneratedText('');
       setPurchaseOrder({
         purchaseOrderNumber: '',
         senderId: '',
@@ -309,7 +309,9 @@ function Form855({ user }) {
   };
 
   const handleLineItemReset = () => {
-    let reset = confirm('Are you sure you want to clear all line items?');
+    const reset = window.location.confirm(
+      'Are you sure you want to clear all line items?',
+    );
     if (reset) {
       setFormErrors({});
       setLineItemErrors(new Map());
@@ -411,9 +413,9 @@ function Form855({ user }) {
       if (savedFormsDoc.exists()) {
         const data = savedFormsDoc.data();
         const formKeys = [];
-        for (let key in data) {
+        Object.keys(data).forEach((key) => {
           formKeys.push(key);
-        }
+        });
         changeSavedFormKeys(formKeys.sort());
         changeSavedForms(data);
       }
@@ -440,279 +442,263 @@ function Form855({ user }) {
     fetch855Form();
   };
 
-  const renderSavedFormsButton = () => {
-    return (
-      <Grid item xs={12} textAlign={'right'}>
-        <IconButton onClick={openFormDrawer}>
-          <Typography variant="h6" sx={{ mr: 1 }}>
-            Saved forms
+  const renderSavedFormsButton = () => (
+    <Grid item xs={12} textAlign="right">
+      <IconButton onClick={openFormDrawer}>
+        <Typography variant="h6" sx={{ mr: 1 }}>
+          Saved forms
+        </Typography>
+        <MenuOpen />
+      </IconButton>
+    </Grid>
+  );
+
+  const renderPurchaseOrderHeader = () => (
+    <>
+      <Grid item xs={12} mb={-3}>
+        <Typography variant="h4">Purchase Order Header</Typography>
+      </Grid>
+      <Grid item md={4}>
+        <TextField
+          fullWidth
+          required
+          error={formErrors.purchaseOrderNumber}
+          label="Purchase order #"
+          value={purchaseOrder.purchaseOrderNumber}
+          onChange={(event) => editPurchaseOrder(event, 'purchaseOrderNumber')}
+        />
+      </Grid>
+      <Grid item md={4}>
+        <TextField
+          fullWidth
+          required
+          error={formErrors.senderId}
+          label="Sender ID"
+          value={purchaseOrder.senderId}
+          onChange={(event) => editPurchaseOrder(event, 'senderId')}
+        />
+      </Grid>
+      <Grid item md={4}>
+        <TextField
+          fullWidth
+          required
+          error={formErrors.receiverId}
+          label="Receiver ID"
+          value={purchaseOrder.receiverId}
+          onChange={(event) => editPurchaseOrder(event, 'receiverId')}
+        />
+      </Grid>
+      <Grid item md={4}>
+        <TextField
+          fullWidth
+          label="Account number"
+          value={purchaseOrder.accountNumber}
+          onChange={(event) => editPurchaseOrder(event, 'accountNumber')}
+        />
+      </Grid>
+      <Grid item md={4}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DateTimePicker
+            label="Purchase order date"
+            value={purchaseOrder.poDate}
+            onChange={handlePoDateChange}
+            renderInput={(params) => <TextField fullWidth {...params} />}
+          />
+        </LocalizationProvider>
+        <IconButton onClick={() => handlePoDateChange(dayjs(new Date()))}>
+          <UpdateIcon />
+        </IconButton>
+        <FormControlLabel
+          control={
+            <Checkbox checked={poDateChecked} onChange={handlePoDateChecked} />
+          }
+          label="Update on submit"
+        />
+      </Grid>
+      <Grid item md={4}>
+        <FormControl fullWidth>
+          <InputLabel>Acknowledgement type</InputLabel>
+          <Select
+            label="Acknowledgement type"
+            value={purchaseOrder.acknowledgementType}
+            onChange={(e) => editPurchaseOrder(e, 'acknowledgementType')}
+          >
+            {poAckTypeCodes.map((poAckTypeCode) => (
+              <MenuItem value={poAckTypeCode.code} key={poAckTypeCode.code}>
+                {`${poAckTypeCode.code} (${poAckTypeCode.description})`}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Grid>
+      <Grid item md={4}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DateTimePicker
+            label="Acknowledgement date"
+            value={purchaseOrder.ackDate}
+            onChange={handleAckDateChange}
+            renderInput={(params) => <TextField {...params} fullWidth />}
+          />
+        </LocalizationProvider>
+        <IconButton onClick={() => handleAckDateChange(dayjs(new Date()))}>
+          <UpdateIcon />
+        </IconButton>
+        <FormControlLabel
+          control={
+            // eslint-disable-next-line react/jsx-wrap-multilines
+            <Checkbox
+              checked={ackDateChecked}
+              onChange={handleAckDateChecked}
+            />
+          }
+          label="Update on submit"
+        />
+      </Grid>
+      <Grid item md={4}>
+        <IconButton onClick={() => setCommentModalOpen(true)}>
+          {purchaseOrder.headerComment ? <CommentIcon /> : <AddCommentIcon />}
+          <Typography ml={1}>
+            {purchaseOrder.headerComment
+              ? 'Edit header comment'
+              : 'Add header comment'}
           </Typography>
-          <MenuOpen />
         </IconButton>
       </Grid>
-    );
-  };
+      <Grid item xs={12}>
+        <LineItems
+          lineItems={lineItems}
+          lineItemErrors={lineItemErrors}
+          setLineItems={setLineItems}
+        />
+      </Grid>
+    </>
+  );
 
-  const renderPurchaseOrderHeader = () => {
-    return (
-      <>
-        <Grid item xs={12} mb={-3}>
-          <Typography variant="h4">Purchase Order Header</Typography>
-        </Grid>
-        <Grid item md={4}>
-          <TextField
-            fullWidth
-            required
-            error={formErrors.purchaseOrderNumber}
-            label="Purchase order #"
-            value={purchaseOrder.purchaseOrderNumber}
-            onChange={(event) =>
-              editPurchaseOrder(event, 'purchaseOrderNumber')
-            }
-          />
-        </Grid>
-        <Grid item md={4}>
-          <TextField
-            fullWidth
-            required
-            error={formErrors.senderId}
-            label="Sender ID"
-            value={purchaseOrder.senderId}
-            onChange={(event) => editPurchaseOrder(event, 'senderId')}
-          />
-        </Grid>
-        <Grid item md={4}>
-          <TextField
-            fullWidth
-            required
-            error={formErrors.receiverId}
-            label="Receiver ID"
-            value={purchaseOrder.receiverId}
-            onChange={(event) => editPurchaseOrder(event, 'receiverId')}
-          />
-        </Grid>
-        <Grid item md={4}>
-          <TextField
-            fullWidth
-            label="Account number"
-            value={purchaseOrder.accountNumber}
-            onChange={(event) => editPurchaseOrder(event, 'accountNumber')}
-          />
-        </Grid>
-        <Grid item md={4}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateTimePicker
-              label="Purchase order date"
-              value={purchaseOrder.poDate}
-              onChange={handlePoDateChange}
-              renderInput={(params) => <TextField fullWidth {...params} />}
-            />
-          </LocalizationProvider>
-          <IconButton onClick={() => handlePoDateChange(dayjs(new Date()))}>
-            <UpdateIcon />
-          </IconButton>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={poDateChecked}
-                onChange={handlePoDateChecked}
-              />
-            }
-            label="Update on submit"
-          />
-        </Grid>
-        <Grid item md={4}>
-          <FormControl fullWidth>
-            <InputLabel>Acknowledgement type</InputLabel>
-            <Select
-              label="Acknowledgement type"
-              value={purchaseOrder.acknowledgementType}
-              onChange={(event) =>
-                editPurchaseOrder(event, 'acknowledgementType')
-              }
-            >
-              {poAckTypeCodes.map((poAckTypeCode) => (
-                <MenuItem value={poAckTypeCode.code} key={poAckTypeCode.code}>
-                  {poAckTypeCode.code + ' (' + poAckTypeCode.description + ')'}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item md={4}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateTimePicker
-              label="Acknowledgement date"
-              value={purchaseOrder.ackDate}
-              onChange={handleAckDateChange}
-              renderInput={(params) => <TextField {...params} fullWidth />}
-            />
-          </LocalizationProvider>
-          <IconButton onClick={() => handleAckDateChange(dayjs(new Date()))}>
-            <UpdateIcon />
-          </IconButton>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={ackDateChecked}
-                onChange={handleAckDateChecked}
-              />
-            }
-            label="Update on submit"
-          />
-        </Grid>
-        <Grid item md={4}>
-          <IconButton onClick={() => setCommentModalOpen(true)}>
-            {purchaseOrder.headerComment ? <CommentIcon /> : <AddCommentIcon />}
-            <Typography ml={1}>
-              {purchaseOrder.headerComment
-                ? 'Edit header comment'
-                : 'Add header comment'}
-            </Typography>
-          </IconButton>
-        </Grid>
+  const renderGeneratedText = () => (
+    <Grid item xs={12}>
+      <Typography variant="h4">Generated 855 file text</Typography>
+      <Box sx={{ border: 1 }}>
+        <Typography sx={{ wordBreak: 'break-word' }}>
+          {generatedText.replace(/ /g, '\u00A0')}
+        </Typography>
+      </Box>
+      <Tooltip
+        title="Copied to clipboard!"
+        open={toolTipOpen}
+        leaveDelay={750}
+        onClose={handleTooltipClose}
+      >
+        <IconButton
+          onClick={() => {
+            navigator.clipboard.writeText(generatedText);
+            setToolTipOpen(true);
+          }}
+          sx={{
+            marginLeft: 'auto',
+            float: 'right',
+          }}
+        >
+          <ContentCopyIcon />
+        </IconButton>
+      </Tooltip>
+      <a download="edi-translator.855" href={fileDownload}>
+        <IconButton
+          sx={{
+            marginLeft: 'auto',
+            float: 'right',
+          }}
+        >
+          <DownloadIcon />
+        </IconButton>
+      </a>
+    </Grid>
+  );
+
+  const renderFormButtons = () => (
+    <>
+      {successAlert && (
         <Grid item xs={12}>
-          <LineItems
-            lineItems={lineItems}
-            lineItemErrors={lineItemErrors}
-            setLineItems={setLineItems}
-          />
-        </Grid>
-      </>
-    );
-  };
-
-  const renderGeneratedText = () => {
-    return (
-      <>
-        <Grid item xs={12}>
-          <Typography variant="h4">Generated 855 file text</Typography>
-          <Box sx={{ border: 1 }}>
-            <Typography sx={{ wordBreak: 'break-word' }}>
-              {generatedText.replace(/ /g, '\u00A0')}
-            </Typography>
-          </Box>
-          <Tooltip
-            title="Copied to clipboard!"
-            open={toolTipOpen}
-            leaveDelay={750}
-            onClose={handleTooltipClose}
+          <Alert
+            style={alertStyle}
+            onClose={() => {
+              setSuccessAlert(false);
+            }}
+            severity="success"
           >
-            <IconButton
-              onClick={() => {
-                navigator.clipboard.writeText(generatedText);
-                setToolTipOpen(true);
-              }}
-              sx={{
-                marginLeft: 'auto',
-                float: 'right',
-              }}
-            >
-              <ContentCopyIcon />
-            </IconButton>
-          </Tooltip>
-          <a download="edi-translator.855" href={fileDownload}>
-            <IconButton
-              sx={{
-                marginLeft: 'auto',
-                float: 'right',
-              }}
-            >
-              <DownloadIcon />
-            </IconButton>
-          </a>
+            Save successful!
+          </Alert>
         </Grid>
-      </>
-    );
-  };
-
-  const renderFormButtons = () => {
-    return (
-      <>
-        {successAlert && (
-          <Grid item xs={12}>
-            <Alert
-              style={alertStyle}
-              onClose={() => {
-                setSuccessAlert(false);
-              }}
-              severity="success"
-            >
-              Save successful!
-            </Alert>
-          </Grid>
+      )}
+      <Grid item xs={user ? 3 : 6}>
+        <Tooltip
+          title="Saved!"
+          fullWidth
+          open={saveToolTipOpen}
+          leaveDelay={750}
+          onClose={handleSaveTooltipClose}
+        >
+          <Button
+            onClick={() => {
+              handleSave();
+              setSaveToolTipOpen(true);
+            }}
+            variant="contained"
+            color="success"
+          >
+            Local Save
+          </Button>
+        </Tooltip>
+      </Grid>
+      {user && (
+        <Grid item xs={3}>
+          <Button
+            fullWidth
+            onClick={openSaveFormModel}
+            variant="contained"
+            color="success"
+          >
+            Save
+          </Button>
+        </Grid>
+      )}
+      <Grid item xs={6}>
+        <Button
+          onClick={handleSubmit}
+          fullWidth
+          variant="contained"
+          color="secondary"
+        >
+          Generate
+        </Button>
+        {((formErrors && Object.keys(formErrors).length > 0) ||
+          (lineItemErrors && lineItemErrors.size > 0)) && (
+          <Typography sx={{ color: 'red' }}>
+            Unable to generate, please check the fields
+          </Typography>
         )}
-        <Grid item xs={user ? 3 : 6}>
-          <Tooltip
-            title="Saved!"
-            fullWidth
-            open={saveToolTipOpen}
-            leaveDelay={750}
-            onClose={handleSaveTooltipClose}
-          >
-            <Button
-              onClick={() => {
-                handleSave();
-                setSaveToolTipOpen(true);
-              }}
-              variant="contained"
-              color="success"
-            >
-              Local Save
-            </Button>
-          </Tooltip>
-        </Grid>
-        {user && (
-          <Grid item xs={3}>
-            <Button
-              fullWidth
-              onClick={openSaveFormModel}
-              variant="contained"
-              color="success"
-            >
-              Save
-            </Button>
-          </Grid>
-        )}
-        <Grid item xs={6}>
-          <Button
-            onClick={handleSubmit}
-            fullWidth
-            variant="contained"
-            color="secondary"
-          >
-            Generate
-          </Button>
-          {((formErrors && Object.keys(formErrors).length > 0) ||
-            (lineItemErrors && lineItemErrors.size > 0)) && (
-            <Typography sx={{ color: 'red' }}>
-              Unable to generate, please check the fields
-            </Typography>
-          )}
-        </Grid>
-        <Grid item xs={6}>
-          <Button
-            fullWidth
-            onClick={handleLineItemReset}
-            variant="contained"
-            sx={{ backgroundColor: 'red' }}
-          >
-            Clear line items
-          </Button>
-        </Grid>
-        <Grid item xs={6} mb={4}>
-          <Button
-            fullWidth
-            onClick={handleReset}
-            variant="contained"
-            sx={{ backgroundColor: 'red' }}
-          >
-            Reset
-          </Button>
-        </Grid>
-      </>
-    );
-  };
+      </Grid>
+      <Grid item xs={6}>
+        <Button
+          fullWidth
+          onClick={handleLineItemReset}
+          variant="contained"
+          sx={{ backgroundColor: 'red' }}
+        >
+          Clear line items
+        </Button>
+      </Grid>
+      <Grid item xs={6} mb={4}>
+        <Button
+          fullWidth
+          onClick={handleReset}
+          variant="contained"
+          sx={{ backgroundColor: 'red' }}
+        >
+          Reset
+        </Button>
+      </Grid>
+    </>
+  );
 
   return (
     <Grid container spacing={4}>
@@ -724,7 +710,7 @@ function Form855({ user }) {
         <CommentModal
           comment={purchaseOrder.headerComment}
           commentModalOpen={commentModalOpen}
-          headerText={'Header Comment'}
+          headerText="Header Comment"
           setComment={editPurchaseOrderHeaderComment}
           setCommentModalOpen={setCommentModalOpen}
         />
@@ -734,9 +720,7 @@ function Form855({ user }) {
           modalOpen={saveFormModalOpen}
           setModalOpen={setSaveFormModalOpen}
           saveForm={handleFormSave}
-          formExistsMessage={
-            'Form name already in use. Would you like to overwrite?'
-          }
+          formExistsMessage="Form name already in use. Would you like to overwrite?"
           saveFormOverwrite={handleFormOverwrite}
         />
       )}
@@ -753,7 +737,7 @@ function Form855({ user }) {
       )}
       {tempAlert && (
         <Grid item xs={12}>
-          <Slide direction="right" in={true} mountOnEnter unmountOnExit>
+          <Slide direction="right" in mountOnEnter unmountOnExit>
             <Alert
               style={tempAlertStyle}
               onClose={() => {
@@ -762,7 +746,12 @@ function Form855({ user }) {
               severity="info"
             >
               Hi There!
-              <img src={icon} width={20} style={{ marginLeft: 10 }} />
+              <img
+                src={icon}
+                alt="Chicken Icon"
+                width={20}
+                style={{ marginLeft: 10 }}
+              />
               <br />
               <br />
               Some new beta features have just been added! You can now log in
@@ -770,7 +759,7 @@ function Form855({ user }) {
               <br />
               <br />
               Please log any issues{' '}
-              <a href={'https://github.com/trandrew1023/edi-translator/issues'}>
+              <a href="https://github.com/trandrew1023/edi-translator/issues">
                 here
               </a>{' '}
               <br />
@@ -786,12 +775,17 @@ function Form855({ user }) {
 
 export default Form855;
 
+Form855.defaultProps = {
+  user: null,
+};
+
 Form855.propTypes = {
   /**
-   * The authenticated user. If user is logged in, enables features
+   * The authenticated Firebase user. If user is logged in, enables features
    * that require user authentication.
    *
    * @default null
    */
+  // eslint-disable-next-line react/forbid-prop-types
   user: PropTypes.object,
 };

@@ -63,10 +63,15 @@ function LineItems({ lineItems, lineItemErrors, setLineItems }) {
   );
 }
 
+LineItems.defaultProps = {
+  lineItems: new Map(),
+  lineItemErrors: new Map(),
+};
+
 LineItems.propTypes = {
   lineItems: PropTypes.objectOf(Map),
   lineItemErrors: PropTypes.objectOf(Map),
-  setLineItems: PropTypes.func,
+  setLineItems: PropTypes.func.isRequired,
 };
 
 export default LineItems;

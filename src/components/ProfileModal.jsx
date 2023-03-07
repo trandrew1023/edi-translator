@@ -27,19 +27,22 @@ export default function ProfileModal({
   const signInWithGoogle = () => {
     signInWithPopup(auth, googleAuthProvider)
       .then((result) => {
-        const user = result.user;
-        setUser(user);
+        const authUser = result.user;
+        setUser(authUser);
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        const email = error.customData.email;
+        const { email } = error.customData;
         const credential = GoogleAuthProvider.credentialFromError(error);
-        console.log('Unable to login using Google with the following error');
-        console.log(errorCode);
-        console.log(errorMessage);
-        console.log(email);
-        console.log(credential);
+        // eslint-disable-next-line no-console
+        console.log(
+          'Unable to login using Google with the following errors',
+          errorCode,
+          errorMessage,
+          email,
+          credential,
+        );
       });
   };
 
@@ -49,14 +52,15 @@ export default function ProfileModal({
         setUser(null);
       })
       .catch((error) => {
+        // eslint-disable-next-line no-console
         console.log(error);
       });
   };
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
+    onAuthStateChanged(auth, (authUser) => {
+      if (authUser) {
+        setUser(authUser);
       } else {
         setUser(null);
       }

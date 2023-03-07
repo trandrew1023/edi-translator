@@ -63,6 +63,10 @@ export default function FormExistsModal({
   );
 }
 
+FormExistsModal.defaultProps = {
+  saveOverwrite: null,
+};
+
 FormExistsModal.propTypes = {
   /**
    * The message displayed in the modal.

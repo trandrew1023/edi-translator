@@ -29,12 +29,12 @@ export default function SaveFormModal({
   const [formExistsOpen, setFormExistsOpen] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
 
-  const handleNameChange = (name) => {
-    setName(name);
+  const handleNameChange = (updatedName) => {
+    setName(updatedName);
   };
 
-  const handleDescriptionChange = (description) => {
-    setDescription(description);
+  const handleDescriptionChange = (updatedDescription) => {
+    setDescription(updatedDescription);
   };
 
   const handleCancel = () => {
@@ -58,6 +58,7 @@ export default function SaveFormModal({
     const response = await saveForm(name, description);
     switch (response) {
       case FORM_SAVE_RESPONSE.FAILURE: {
+        // eslint-disable-next-line no-alert
         alert('Unable to save. Please try again later');
         break;
       }
@@ -69,6 +70,8 @@ export default function SaveFormModal({
         setModalOpen(false);
         break;
       }
+      default:
+        break;
     }
     setSaveLoading(false);
   };
@@ -77,6 +80,7 @@ export default function SaveFormModal({
     const response = await saveFormOverwrite(name, description);
     switch (response) {
       case FORM_SAVE_RESPONSE.FAILURE: {
+        // eslint-disable-next-line no-alert
         alert('Unable to save. Please try again later');
         break;
       }
@@ -84,6 +88,8 @@ export default function SaveFormModal({
         setModalOpen(false);
         break;
       }
+      default:
+        break;
     }
   };
 
@@ -160,10 +166,17 @@ export default function SaveFormModal({
   );
 }
 
+SaveFormModal.defaultProps = {
+  formExistsMessage: null,
+  saveFormOverwrite: null,
+};
+
 SaveFormModal.propTypes = {
   /**
    * If provided, is the message for the override functionality in response to
    * {@link FORM_SAVE_RESPONSE.EXISTS}
+   *
+   * @default null
    */
   formExistsMessage: PropTypes.string,
   /**
@@ -175,7 +188,10 @@ SaveFormModal.propTypes = {
    */
   saveForm: PropTypes.func.isRequired,
   /**
-   * Callback function provided to FormExistsModal to overwrite and save the form.
+   * Optional callback function provided to FormExistsModal
+   * to overwrite and save the form if overwrite is enabled.
+   *
+   * @default null
    */
   saveFormOverwrite: PropTypes.func,
   /**
