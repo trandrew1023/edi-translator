@@ -35,6 +35,7 @@ export default function ProfileModal({
         const errorMessage = error.message;
         const { email } = error.customData;
         const credential = GoogleAuthProvider.credentialFromError(error);
+        // eslint-disable-next-line no-console
         console.log(
           'Unable to login using Google with the following errors',
           errorCode,
@@ -51,6 +52,7 @@ export default function ProfileModal({
         setUser(null);
       })
       .catch((error) => {
+        // eslint-disable-next-line no-console
         console.log(error);
       });
   };
