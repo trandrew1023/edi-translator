@@ -24,7 +24,7 @@ export default function CommentModal({
   };
 
   const handleSubmitKeypress = (event) => {
-    if (event.which == 13) {
+    if (event.which === 13) {
       event.preventDefault();
       handleSubmit();
     }
@@ -42,7 +42,7 @@ export default function CommentModal({
               value={updatedComment}
               onChange={(event) => setUpdatedComment(event.target.value)}
               onKeyPress={handleSubmitKeypress}
-            ></TextField>
+            />
           </Grid>
         </Grid>
         <Box
@@ -74,6 +74,8 @@ export default function CommentModal({
 
 CommentModal.defaultProps = {
   closeOnSubmit: true,
+  comment: '',
+  headerText: 'Comment',
 };
 
 CommentModal.propTypes = {

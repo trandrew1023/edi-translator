@@ -1,3 +1,5 @@
+/* eslint-disable no-plusplus */
+/* eslint-disable quotes */
 export function to855(purchaseOrder, lineItems) {
   let text = ``;
   let numberOfSegments = 0;

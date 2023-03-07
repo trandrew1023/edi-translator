@@ -32,7 +32,7 @@ export default function EdiTranslatorBar({
         <Toolbar disableGutters>
           <Typography
             onClick={() => {
-              scrollTo(0, 0);
+              window.location.scrollTo(0, 0);
             }}
             sx={{
               flexGrow: 1,
@@ -66,6 +66,10 @@ export default function EdiTranslatorBar({
     </AppBar>
   );
 }
+
+EdiTranslatorBar.defaultProps = {
+  profileImg: '',
+};
 
 EdiTranslatorBar.propTypes = {
   /**

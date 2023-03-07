@@ -87,6 +87,10 @@ export default function FormDrawer({
   );
 }
 
+FormDrawer.defaultProps = {
+  isLoading: false,
+};
+
 FormDrawer.propTypes = {
   /**
    * Callback function to close the drawer.
@@ -125,5 +129,5 @@ FormDrawer.propTypes = {
    * The collection of form keys where each key is the
    * form's unique key (should be the form's name).
    */
-  savedFormKeys: PropTypes.array.isRequired,
+  savedFormKeys: PropTypes.arrayOf(PropTypes.string).isRequired,
 };

@@ -22,7 +22,7 @@ function App() {
   const themePref = localStorage.getItem('dark-mode-pref');
   const lastForm = localStorage.getItem('lastForm');
   const [darkMode, setDarkMode] = useState(themePref === 'dark');
-  const [form, selectForm] = useState(lastForm ? lastForm : 0);
+  const [form, selectForm] = useState(lastForm || 0);
   const [profileImg, setProfileImg] = useState('');
   const [user, setUser] = useState(null);
 
@@ -56,10 +56,10 @@ function App() {
   };
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setProfileImg(user.photoURL);
-        setUser(user);
+    onAuthStateChanged(auth, (authUser) => {
+      if (authUser) {
+        setProfileImg(authUser.photoURL);
+        setUser(authUser);
       } else {
         setProfileImg('');
         setUser(null);
@@ -100,9 +100,8 @@ function App() {
       case FORMS[855004010].value:
         return <Form855 user={user} />;
       case FORMS.DEFAULT.value:
-        return;
       default:
-        return;
+        return null;
     }
   };
 

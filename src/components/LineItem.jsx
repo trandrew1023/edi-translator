@@ -52,6 +52,9 @@ export default function LineItem({
     setLineItemOpen(!lineItemOpen);
   };
 
+  const getLineItemDisplay = () =>
+    lineItem.item ? `${index + 1}: (${lineItem.item})` : `${index + 1}`;
+
   return (
     <Box>
       <Button
@@ -61,7 +64,7 @@ export default function LineItem({
           lineItemOpen ? <KeyboardArrowDown /> : <KeyboardArrowRight />
         }
       >
-        {`${index + 1}: ` + (lineItem.item ? `(${lineItem.item})` : '')}
+        {getLineItemDisplay()}
       </Button>
       <Collapse
         in={lineItemOpen}
@@ -160,10 +163,7 @@ export default function LineItem({
                     value={poLineStatusCode.code}
                     key={poLineStatusCode.code}
                   >
-                    {poLineStatusCode.code +
-                      ' (' +
-                      poLineStatusCode.description +
-                      ')'}
+                    {`${poLineStatusCode.code} (${poLineStatusCode.description})`}
                   </MenuItem>
                 ))}
               </Select>
@@ -187,7 +187,7 @@ export default function LineItem({
             <CommentModal
               comment={lineItem.comment}
               commentModalOpen={commentModalOpen}
-              headerText={'Line Comment - ' + lineItem.item}
+              headerText={`Line Comment - ${lineItem.item}`}
               setComment={editLineItemComment}
               setCommentModalOpen={setCommentModalOpen}
             />
@@ -197,6 +197,10 @@ export default function LineItem({
     </Box>
   );
 }
+
+LineItem.defaultProps = {
+  lineItemError: {},
+};
 
 LineItem.propTypes = {
   /**
@@ -222,6 +226,7 @@ LineItem.propTypes = {
    * The following properties can be set if the line item prop has an error:
    * {acknowledgedQuantity, item, orderedQuantity, price, unitOfMeasure}
    */
+  // eslint-disable-next-line react/forbid-prop-types
   lineItemError: PropTypes.object,
   /**
    * The unique key for this line item for reference. Specifically, the line item
