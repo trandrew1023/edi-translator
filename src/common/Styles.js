@@ -25,3 +25,15 @@ export const modalStyle = {
   boxShadow: 24,
   p: 4,
 };
+
+// Temp alert style
+export const tempAlertStyle = {
+  position: 'fixed',
+  top: '70%',
+  left: '2%',
+  maxWidth: '330px',
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  p: 4,
+  zIndex: 1,
+};

@@ -26,23 +26,30 @@ import { React, useState } from 'react';
 import poLineStatusCodes from '../static/data/poLineStatusCodes.json';
 import CommentModal from './CommentModal';
 
-function LineItem({
+/**
+ * This component renders a single line item that can be updated.
+ */
+export default function LineItem({
   index,
   lineItem,
   lineItemError,
-  mapID,
+  lineItemKey,
   removeLineItem,
   updateLineItem,
 }) {
   const [commentModalOpen, setCommentModalOpen] = useState(false);
-  const [open, setOpen] = useState(true);
+  const [lineItemOpen, setLineItemOpen] = useState(true);
 
   const handleEventChange = (event, prop) => {
-    updateLineItem(mapID, prop, event.target.value);
+    updateLineItem(lineItemKey, prop, event.target.value);
+  };
+
+  const editLineItemComment = (updatedComment) => {
+    handleEventChange({ target: { value: updatedComment } }, 'comment');
   };
 
   const handleLineItemCollapse = () => {
-    setOpen(!open);
+    setLineItemOpen(!lineItemOpen);
   };
 
   return (
@@ -50,12 +57,14 @@ function LineItem({
       <Button
         variant="text"
         onClick={handleLineItemCollapse}
-        startIcon={open ? <KeyboardArrowDown /> : <KeyboardArrowRight />}
+        startIcon={
+          lineItemOpen ? <KeyboardArrowDown /> : <KeyboardArrowRight />
+        }
       >
         {`${index + 1}: ` + (lineItem.item ? `(${lineItem.item})` : '')}
       </Button>
       <Collapse
-        in={open}
+        in={lineItemOpen}
         sx={{ paddingTop: '10px' }}
         timeout="auto"
         unmountOnExit
@@ -169,19 +178,18 @@ function LineItem({
             </IconButton>
           </Grid>
           <Grid item xs={12}>
-            <IconButton onClick={() => removeLineItem(mapID)}>
+            <IconButton onClick={() => removeLineItem(lineItemKey)}>
               <RemoveCircleIcon sx={{ color: 'red', mr: 1 }} />
               <Typography>Remove line item</Typography>
             </IconButton>
           </Grid>
           {commentModalOpen && (
             <CommentModal
-              commentModalOpen={commentModalOpen}
-              setCommentModalOpen={setCommentModalOpen}
               comment={lineItem.comment}
-              setComment={handleEventChange}
-              header={'Line Comment - ' + lineItem.item}
-              target={'comment'}
+              commentModalOpen={commentModalOpen}
+              headerText={'Line Comment - ' + lineItem.item}
+              setComment={editLineItemComment}
+              setCommentModalOpen={setCommentModalOpen}
             />
           )}
         </Grid>
@@ -191,7 +199,14 @@ function LineItem({
 }
 
 LineItem.propTypes = {
+  /**
+   * The position of the line item starting at 0.
+   * Used to display the line item's line number.
+   */
   index: PropTypes.number.isRequired,
+  /**
+   * The line item details.
+   */
   lineItem: PropTypes.shape({
     item: PropTypes.string,
     description: PropTypes.string,
@@ -202,10 +217,29 @@ LineItem.propTypes = {
     unitOfMeasure: PropTypes.string,
     comment: PropTypes.string,
   }).isRequired,
+  /**
+   * The line item errors used to set the input error props.
+   * The following properties can be set if the line item prop has an error:
+   * {acknowledgedQuantity, item, orderedQuantity, price, unitOfMeasure}
+   */
   lineItemError: PropTypes.object,
-  mapID: PropTypes.string.isRequired,
+  /**
+   * The unique key for this line item for reference. Specifically, the line item
+   * {@link Map} key.
+   */
+  lineItemKey: PropTypes.string.isRequired,
+  /**
+   * Callback function the remove this line item.
+   *
+   * @param {string} key The unique key for this line item.
+   */
   removeLineItem: PropTypes.func.isRequired,
+  /**
+   * Callback function to provide updated line item details.
+   *
+   * @param {string} key The unique key for this line item.
+   * @param {string} prop The line item property name being updated.
+   * @param {string} value The updated value.
+   */
   updateLineItem: PropTypes.func.isRequired,
 };
-
-export default LineItem;

@@ -13,12 +13,15 @@ import { FORM_SAVE_RESPONSE } from '../common/Constants';
 import { modalStyle } from '../common/Styles';
 import FormExistsModal from './FormExistsModal';
 
+/**
+ * This component opens a modal to save the current form.
+ */
 export default function SaveFormModal({
-  modalOpen,
-  setModalOpen,
-  saveForm,
   formExistsMessage,
+  modalOpen,
+  saveForm,
   saveFormOverwrite,
+  setModalOpen,
 }) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -74,7 +77,7 @@ export default function SaveFormModal({
     const response = await saveFormOverwrite(name, description);
     switch (response) {
       case FORM_SAVE_RESPONSE.FAILURE: {
-        console.log('save failure');
+        alert('Unable to save. Please try again later');
         break;
       }
       case FORM_SAVE_RESPONSE.SUCCESS: {
@@ -158,9 +161,25 @@ export default function SaveFormModal({
 }
 
 SaveFormModal.propTypes = {
-  modalOpen: PropTypes.bool.isRequired,
-  setModalOpen: PropTypes.func.isRequired,
-  saveForm: PropTypes.func.isRequired,
+  /**
+   * If provided, is the message for the override functionality in response to
+   * {@link FORM_SAVE_RESPONSE.EXISTS}
+   */
   formExistsMessage: PropTypes.string,
+  /**
+   * If `true`, the modal is shown.
+   */
+  modalOpen: PropTypes.bool.isRequired,
+  /**
+   * Callback function to save the form.
+   */
+  saveForm: PropTypes.func.isRequired,
+  /**
+   * Callback function provided to FormExistsModal to overwrite and save the form.
+   */
   saveFormOverwrite: PropTypes.func,
+  /**
+   * Callback function to toggle when the modal is shown.
+   */
+  setModalOpen: PropTypes.func.isRequired,
 };

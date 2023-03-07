@@ -10,11 +10,14 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { modalStyle } from '../common/Styles';
 
+/**
+ * This component opens a modal with a message that allows the user to override an action.
+ */
 export default function FormExistsModal({
-  modalOpen,
-  setModalOpen,
   message,
+  modalOpen,
   saveOverwrite,
+  setModalOpen,
 }) {
   const [saveLoading, setSaveLoading] = useState(false);
 
@@ -61,8 +64,21 @@ export default function FormExistsModal({
 }
 
 FormExistsModal.propTypes = {
-  modalOpen: PropTypes.bool.isRequired,
-  setModalOpen: PropTypes.func.isRequired,
+  /**
+   * The message displayed in the modal.
+   */
   message: PropTypes.string.isRequired,
+  /**
+   * If `true`, the modal is shown.
+   */
+  modalOpen: PropTypes.bool.isRequired,
+  /**
+   * Callback function to continue the flow. If not provided,
+   * the Overwrite button is not displayed.
+   */
   saveOverwrite: PropTypes.func,
+  /**
+   * Callback function to toggle when the modal is shown.
+   */
+  setModalOpen: PropTypes.func.isRequired,
 };

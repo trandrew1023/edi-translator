@@ -3,6 +3,7 @@ import {
   Box,
   CircularProgress,
   Divider,
+  Drawer,
   Grid,
   IconButton,
   List,
@@ -12,18 +13,18 @@ import {
   Typography,
 } from '@mui/material';
 import PropTypes from 'prop-types';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment } from 'react';
 
 export default function FormDrawer({
   closeFormDrawer,
-  openForm,
-  savedFormKeys,
-  savedForms,
-  getSavedForms,
   deleteForm,
+  formDrawerOpen,
+  // getSavedForms,
+  isLoading = false,
+  openForm,
+  savedForms,
+  savedFormKeys,
 }) {
-  const [isLoading, setIsLoading] = useState(false);
-
   const handleOpenForm = (key) => {
     openForm(key);
     closeFormDrawer();
@@ -33,69 +34,106 @@ export default function FormDrawer({
     deleteForm(key, index);
   };
 
-  useEffect(() => {
-    setIsLoading(true);
-    getSavedForms();
-    setIsLoading(false);
-  }, []);
+  // useEffect(() => {
+  //   getSavedForms();
+  // }, []);
 
   return (
-    <Box
-      sx={{ width: 290, m: 1 }}
-      role="presentation"
-      onKeyDown={closeFormDrawer}
-    >
-      <Typography variant="h3" sx={{ textAlign: 'center' }}>
-        Saved 855 Forms
-      </Typography>
-      {isLoading ? (
-        <Grid
-          container
-          height="80vh"
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <CircularProgress />
-        </Grid>
-      ) : (
-        <List>
-          {savedFormKeys.length > 0 ? (
-            savedFormKeys.map((key, index) => (
-              <Fragment key={key}>
-                <ListItem
-                  secondaryAction={
-                    <IconButton onClick={() => handleDeleteForm(key, index)}>
-                      <DeleteIcon />
-                    </IconButton>
-                  }
-                >
-                  <ListItemButton onClick={() => handleOpenForm(key)}>
-                    <ListItemText
-                      primary={key}
-                      secondary={savedForms[key].description}
-                    />
-                  </ListItemButton>
-                </ListItem>
-                <Divider component="li" />
-              </Fragment>
-            ))
-          ) : (
-            <Typography>No forms saved</Typography>
-          )}
-        </List>
-      )}
-    </Box>
+    <Drawer anchor="right" open={formDrawerOpen} onClose={closeFormDrawer}>
+      <Box
+        sx={{ width: 290, m: 1 }}
+        role="presentation"
+        onKeyDown={closeFormDrawer}
+      >
+        <Typography variant="h3" sx={{ textAlign: 'center' }}>
+          Saved 855 Forms
+        </Typography>
+        {isLoading ? (
+          <Grid
+            container
+            height="80vh"
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <CircularProgress />
+          </Grid>
+        ) : (
+          <List>
+            {savedFormKeys.length > 0 ? (
+              savedFormKeys.map((key, index) => (
+                <Fragment key={key}>
+                  <ListItem
+                    secondaryAction={
+                      <IconButton onClick={() => handleDeleteForm(key, index)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    }
+                  >
+                    <ListItemButton onClick={() => handleOpenForm(key)}>
+                      <ListItemText
+                        primary={key}
+                        secondary={savedForms[key].description}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                  <Divider component="li" />
+                </Fragment>
+              ))
+            ) : (
+              <Typography>No forms saved</Typography>
+            )}
+          </List>
+        )}
+      </Box>
+    </Drawer>
   );
 }
 
 FormDrawer.propTypes = {
+  /**
+   * Callback function to close the drawer.
+   */
   closeFormDrawer: PropTypes.func.isRequired,
-  openForm: PropTypes.func.isRequired,
-  savedFormKeys: PropTypes.array.isRequired,
-  savedForms: PropTypes.object.isRequired,
-  getSavedForms: PropTypes.func.isRequired,
+  /**
+   * Callback function to delete a form from the list.
+   *
+   * @param {string} key The form's unique key (should be the form's name).
+   * @param {number} index The index of the form's position in the savedFormKeys.
+   */
   deleteForm: PropTypes.func.isRequired,
+  /**
+   * If `true`, the drawer is shown.
+   */
+  formDrawerOpen: PropTypes.bool.isRequired,
+  /**
+   * Callback function to kick-off the retrieval of the user's saved forms.
+   * TODO: this should be handled by the consumer and should just pass the forms.
+   */
+  // getSavedForms: PropTypes.func.isRequired,
+  /**
+   * If `true`, displays CircularProgress.
+   *
+   * @default false
+   */
+  isLoading: PropTypes.bool,
+  /**
+   * Callback funtion to provide the selected form save to open.
+   *
+   * @param {string} key The form's unique key (should be the form's name).
+   */
+  openForm: PropTypes.func.isRequired,
+  /**
+   * An object to reference the form's information stored as an object, where key is the
+   * form's unique key (should be the form's name). The form information has:
+   * {description: string,}
+   */
+  savedForms: PropTypes.objectOf(PropTypes.object).isRequired,
+  /**
+   * The collection of form keys where each key is the
+   * form's unique key (should be the form's name).
+   */
+  savedFormKeys: PropTypes.array.isRequired,
 };
