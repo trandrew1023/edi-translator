@@ -119,7 +119,7 @@ function App() {
           alignItems: 'center',
           bgcolor: 'background.default',
           color: 'text.primary',
-          minHeight: '100vh',
+          minHeight: '90vh',
           height: 'auto',
         }}
       >
@@ -133,6 +133,18 @@ function App() {
           {renderFormSelect()}
           {renderForm()}
         </Grid>
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          bgcolor: 'background.default',
+          color: 'text.primary',
+          minHeight: '10vh',
+          height: 'auto',
+        }}
+      >
         <IconButton
           href="https://github.com/trandrew1023/edi-translator#readme"
           sx={{
