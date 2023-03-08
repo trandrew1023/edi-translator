@@ -505,7 +505,10 @@ function Form855({ user }) {
             renderInput={(params) => <TextField fullWidth {...params} />}
           />
         </LocalizationProvider>
-        <IconButton onClick={() => handlePoDateChange(dayjs(new Date()))}>
+        <IconButton
+          aria-label="Reset purchase order date to current time"
+          onClick={() => handlePoDateChange(dayjs(new Date()))}
+        >
           <UpdateIcon />
         </IconButton>
         <FormControlLabel
@@ -540,7 +543,10 @@ function Form855({ user }) {
             renderInput={(params) => <TextField {...params} fullWidth />}
           />
         </LocalizationProvider>
-        <IconButton onClick={() => handleAckDateChange(dayjs(new Date()))}>
+        <IconButton
+          aria-label="Reset purchase order date to current time"
+          onClick={() => handleAckDateChange(dayjs(new Date()))}
+        >
           <UpdateIcon />
         </IconButton>
         <FormControlLabel
