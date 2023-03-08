@@ -71,15 +71,16 @@ export default function EdiTranslatorBar({
               aria-label="Open profile modal"
               onClick={handleProfileClick}
             >
-              {profileImg ? (
-                <Avatar
-                  alt="Profile image"
-                  referrerPolicy="no-referrer"
-                  src={profileImg}
-                />
-              ) : (
-                <Avatar alt="Profile image" />
-              )}
+              {profileImg !== null &&
+                (profileImg ? (
+                  <Avatar
+                    alt="Profile image"
+                    referrerPolicy="no-referrer"
+                    src={profileImg}
+                  />
+                ) : (
+                  <Avatar alt="Profile image" />
+                ))}
             </IconButton>
           </Box>
         </Toolbar>
