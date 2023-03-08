@@ -82,6 +82,11 @@ export default function LineItem({
               value={lineItem.item}
               onChange={(event) => handleEventChange(event, 'item')}
             />
+            {lineItemError?.item && (
+              <Typography variant="caption" sx={{ color: 'red' }}>
+                Please fill out required field
+              </Typography>
+            )}
           </Grid>
           <Grid item md={4}>
             <TextField
@@ -100,6 +105,11 @@ export default function LineItem({
               value={lineItem.unitOfMeasure}
               onChange={(event) => handleEventChange(event, 'unitOfMeasure')}
             />
+            {lineItemError?.unitOfMeasure && (
+              <Typography variant="caption" sx={{ color: 'red' }}>
+                Please fill out required field
+              </Typography>
+            )}
           </Grid>
           <Grid item md={4}>
             <TextField
@@ -110,6 +120,11 @@ export default function LineItem({
               value={lineItem.orderedQuantity}
               onChange={(event) => handleEventChange(event, 'orderedQuantity')}
             />
+            {lineItemError?.orderedQuantity && (
+              <Typography variant="caption" sx={{ color: 'red' }}>
+                Please fill out required field
+              </Typography>
+            )}
           </Grid>
           <Grid item md={4}>
             <TextField
@@ -122,6 +137,11 @@ export default function LineItem({
                 handleEventChange(event, 'acknowledgedQuantity')
               }
             />
+            {lineItemError?.acknowledgedQuantity && (
+              <Typography variant="caption" sx={{ color: 'red' }}>
+                Please fill out required field
+              </Typography>
+            )}
           </Grid>
           <Grid item md={4}>
             <TextField
@@ -147,6 +167,11 @@ export default function LineItem({
                 ),
               }}
             />
+            {lineItemError?.price && (
+              <Typography variant="caption" sx={{ color: 'red' }}>
+                Please fill out required field
+              </Typography>
+            )}
           </Grid>
           <Grid item xs={4}>
             <FormControl fullWidth>

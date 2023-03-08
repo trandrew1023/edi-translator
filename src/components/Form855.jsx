@@ -25,6 +25,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
+import { logEvent } from 'firebase/analytics';
 import {
   deleteDoc,
   deleteField,
@@ -38,7 +39,7 @@ import PropTypes from 'prop-types';
 import { React, useEffect, useState } from 'react';
 import { to855 } from '../common/855Translator';
 import { FORM_SAVE_RESPONSE } from '../common/Constants';
-import { db } from '../common/Firebase';
+import { analytics, db } from '../common/Firebase';
 import { alertStyle, tempAlertStyle } from '../common/Styles';
 import poAckTypeCodes from '../static/data/poAckTypeCodes.json';
 import icon from '../static/images/chick.png';
@@ -118,6 +119,9 @@ function Form855({ user }) {
   };
 
   const handleSubmit = () => {
+    logEvent(analytics, 'generate', {
+      form: '855',
+    });
     setFormErrors({});
     setLineItemErrors(new Map());
     setGeneratedText('');
@@ -424,6 +428,9 @@ function Form855({ user }) {
   };
 
   const openFormDrawer = () => {
+    logEvent(analytics, 'open_saved_forms', {
+      form: '855',
+    });
     getSavedForms();
     setFormDrawerOpen(true);
   };
@@ -467,6 +474,11 @@ function Form855({ user }) {
           value={purchaseOrder.purchaseOrderNumber}
           onChange={(event) => editPurchaseOrder(event, 'purchaseOrderNumber')}
         />
+        {formErrors.purchaseOrderNumber && (
+          <Typography variant="caption" sx={{ color: 'red' }}>
+            Please fill out required field
+          </Typography>
+        )}
       </Grid>
       <Grid item md={4}>
         <TextField
@@ -477,6 +489,11 @@ function Form855({ user }) {
           value={purchaseOrder.senderId}
           onChange={(event) => editPurchaseOrder(event, 'senderId')}
         />
+        {formErrors.senderId && (
+          <Typography variant="caption" sx={{ color: 'red' }}>
+            Please fill out required field
+          </Typography>
+        )}
       </Grid>
       <Grid item md={4}>
         <TextField
@@ -487,6 +504,11 @@ function Form855({ user }) {
           value={purchaseOrder.receiverId}
           onChange={(event) => editPurchaseOrder(event, 'receiverId')}
         />
+        {formErrors.receiverId && (
+          <Typography variant="caption" sx={{ color: 'red' }}>
+            Please fill out required field
+          </Typography>
+        )}
       </Grid>
       <Grid item md={4}>
         <TextField
@@ -598,6 +620,9 @@ function Form855({ user }) {
           onClick={() => {
             navigator.clipboard.writeText(generatedText);
             setToolTipOpen(true);
+            logEvent(analytics, 'copy_generated_text', {
+              form: '855',
+            });
           }}
           sx={{
             marginLeft: 'auto',
@@ -609,6 +634,11 @@ function Form855({ user }) {
       </Tooltip>
       <a download="edi-translator.855" href={fileDownload}>
         <IconButton
+          onClick={() => {
+            logEvent(analytics, 'download_generated_text', {
+              form: '855',
+            });
+          }}
           sx={{
             marginLeft: 'auto',
             float: 'right',
@@ -647,6 +677,9 @@ function Form855({ user }) {
             onClick={() => {
               handleSave();
               setSaveToolTipOpen(true);
+              logEvent(analytics, 'local_save', {
+                form: '855',
+              });
             }}
             variant="contained"
             color="success"
