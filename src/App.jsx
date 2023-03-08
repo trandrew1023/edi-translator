@@ -23,7 +23,7 @@ function App() {
   const lastForm = localStorage.getItem('lastForm');
   const [darkMode, setDarkMode] = useState(themePref === 'dark');
   const [form, selectForm] = useState(lastForm || 0);
-  const [profileImg, setProfileImg] = useState('');
+  const [profileImg, setProfileImg] = useState(null);
   const [user, setUser] = useState(null);
 
   const theme = createTheme({
