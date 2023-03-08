@@ -1,6 +1,13 @@
 import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness4OutlinedIcon from '@mui/icons-material/Brightness4Outlined';
-import { AppBar, Avatar, IconButton, Toolbar, Typography } from '@mui/material';
+import Brightness5Icon from '@mui/icons-material/Brightness5';
+import {
+  AppBar,
+  Avatar,
+  IconButton,
+  Toolbar,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { Box, Container } from '@mui/system';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
@@ -25,14 +32,14 @@ export default function EdiTranslatorBar({
       position="fixed"
       sx={{
         color: darkMode ? 'white' : 'black',
-        background: darkMode ? '#808080' : '#D3D3D3',
+        background: darkMode ? '#696969' : '#D3D3D3',
       }}
     >
       <Container maxWidth="md">
         <Toolbar disableGutters>
           <Typography
             onClick={() => {
-              window.location.scrollTo(0, 0);
+              window.scrollTo(0, 0);
             }}
             sx={{
               flexGrow: 1,
@@ -44,15 +51,35 @@ export default function EdiTranslatorBar({
             EDI Translator
           </Typography>
           <Box sx={{ flexGrow: 0 }}>
-            <IconButton onClick={toggleDarkMode}>
-              {darkMode === 'light' ? (
-                <Brightness4Icon />
+            <IconButton
+              aria-label={
+                darkMode ? 'Switch to light theme' : 'Switch to dark theme'
+              }
+              onClick={toggleDarkMode}
+            >
+              {darkMode ? (
+                <Tooltip title="Switch to light theme">
+                  <Brightness5Icon />
+                </Tooltip>
               ) : (
-                <Brightness4OutlinedIcon />
+                <Tooltip title="Switch to dark theme">
+                  <Brightness4Icon />
+                </Tooltip>
               )}
             </IconButton>
-            <IconButton onClick={handleProfileClick}>
-              {profileImg ? <Avatar src={profileImg} /> : <Avatar />}
+            <IconButton
+              aria-label="Open profile modal"
+              onClick={handleProfileClick}
+            >
+              {profileImg ? (
+                <Avatar
+                  alt="Profile image"
+                  referrerPolicy="no-referrer"
+                  src={profileImg}
+                />
+              ) : (
+                <Avatar alt="Profile image" />
+              )}
             </IconButton>
           </Box>
         </Toolbar>

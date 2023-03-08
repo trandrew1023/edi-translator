@@ -146,9 +146,12 @@ function App() {
         }}
       >
         <IconButton
+          aria-label="Go to GitHub repository"
           href="https://github.com/trandrew1023/edi-translator#readme"
+          size="large"
           sx={{
             alignSelf: 'flex-end',
+            bottom: 0,
           }}
         >
           <GitHubIcon />
