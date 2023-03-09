@@ -15,6 +15,7 @@ import { React, useEffect, useState } from 'react';
 import './App.css';
 import { ediTranslatorForms, FORMS } from './common/Constants';
 import { auth } from './common/Firebase';
+import DarkModeToggleButton from './components/DarkModeToggleButton';
 import EdiTranslatorBar from './components/EdiTranslatorBar';
 import Form855 from './components/Form855';
 
@@ -39,6 +40,16 @@ function App() {
     typography: {
       button: {
         fontWeight: 700,
+      },
+    },
+    components: {
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            color: darkMode ? 'white' : 'black',
+            background: darkMode ? '#696969' : '#D3D3D3',
+          },
+        },
       },
     },
   });
@@ -108,9 +119,13 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <EdiTranslatorBar
-        darkMode={darkMode}
         profileImg={profileImg}
-        toggleDarkMode={toggleDarkMode}
+        darkModeToggleButton={
+          <DarkModeToggleButton
+            darkMode={darkMode}
+            toggleDarkMode={toggleDarkMode}
+          />
+        }
       />
       <Box
         sx={{

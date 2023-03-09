@@ -1,13 +1,4 @@
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness5Icon from '@mui/icons-material/Brightness5';
-import {
-  AppBar,
-  Avatar,
-  IconButton,
-  Toolbar,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { AppBar, Avatar, IconButton, Toolbar, Typography } from '@mui/material';
 import { Box, Container } from '@mui/system';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
@@ -17,9 +8,8 @@ import ProfileModal from './ProfileModal';
  * This component renders the EDI Translator App Bar.
  */
 export default function EdiTranslatorBar({
-  darkMode,
   profileImg = '',
-  toggleDarkMode,
+  darkModeToggleButton,
 }) {
   const [profileModalOpen, setProfileModalOpen] = useState(false);
 
@@ -28,13 +18,7 @@ export default function EdiTranslatorBar({
   };
 
   return (
-    <AppBar
-      position="fixed"
-      sx={{
-        color: darkMode ? 'white' : 'black',
-        background: darkMode ? '#696969' : '#D3D3D3',
-      }}
-    >
+    <AppBar position="fixed">
       <Container maxWidth="md">
         <Toolbar disableGutters>
           <Typography
@@ -51,22 +35,7 @@ export default function EdiTranslatorBar({
             EDI Translator
           </Typography>
           <Box sx={{ flexGrow: 0 }}>
-            <IconButton
-              aria-label={
-                darkMode ? 'Switch to light theme' : 'Switch to dark theme'
-              }
-              onClick={toggleDarkMode}
-            >
-              {darkMode ? (
-                <Tooltip title="Switch to light theme">
-                  <Brightness5Icon />
-                </Tooltip>
-              ) : (
-                <Tooltip title="Switch to dark theme">
-                  <Brightness4Icon />
-                </Tooltip>
-              )}
-            </IconButton>
+            {darkModeToggleButton}
             <IconButton
               aria-label="Open profile modal"
               onClick={handleProfileClick}
@@ -101,17 +70,13 @@ EdiTranslatorBar.defaultProps = {
 
 EdiTranslatorBar.propTypes = {
   /**
-   * If `true`, the app theme should be dark mode and the app bar will follow the theme.
-   */
-  darkMode: PropTypes.bool.isRequired,
-  /**
    * The source of the profile image. Default is empty string ''.
    *
    * @default ''
    */
   profileImg: PropTypes.string,
   /**
-   * Callback function to toggle the app theme.
+   * Button component to toggle the app's theme.
    */
-  toggleDarkMode: PropTypes.func.isRequired,
+  darkModeToggleButton: PropTypes.element.isRequired,
 };

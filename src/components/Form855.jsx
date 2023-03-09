@@ -199,16 +199,11 @@ function Form855({ user }) {
     };
   };
 
-  const handleFormSave = async (name, description) => {
+  const saveForm = async (name, description) => {
     if (!name) {
       return FORM_SAVE_RESPONSE.FAILURE;
     }
     const savedFormsRef = doc(db, user.uid, 'savedForms');
-    const formRef = doc(db, user.uid, name);
-    const docSnap = await getDoc(formRef);
-    if (docSnap.exists()) {
-      return FORM_SAVE_RESPONSE.EXISTS;
-    }
     const savedFormsDoc = await getDoc(savedFormsRef);
     if (savedFormsDoc.exists()) {
       await updateDoc(savedFormsRef, {
@@ -234,34 +229,16 @@ function Form855({ user }) {
     return FORM_SAVE_RESPONSE.SUCCESS;
   };
 
-  const handleFormOverwrite = async (name, description) => {
+  const handleFormSave = async (name, description) => {
     if (!name) {
       return FORM_SAVE_RESPONSE.FAILURE;
     }
-    const savedFormsRef = doc(db, user.uid, 'savedForms');
-    const savedFormsDoc = await getDoc(savedFormsRef);
-    if (savedFormsDoc.exists()) {
-      await updateDoc(savedFormsRef, {
-        [name]: {
-          description,
-        },
-      });
-    } else {
-      await setDoc(savedFormsRef, {
-        [name]: {
-          description,
-        },
-      });
+    const formRef = doc(db, user.uid, name);
+    const docSnap = await getDoc(formRef);
+    if (docSnap.exists()) {
+      return FORM_SAVE_RESPONSE.EXISTS;
     }
-    await setDoc(doc(db, user.uid, name), {
-      purchaseOrder: JSON.stringify(purchaseOrder),
-      lineItems: JSON.stringify([...lineItems]),
-      description,
-      createDate: new Date(),
-    });
-    handleSave();
-    showSuccessfulSaveAlert();
-    return FORM_SAVE_RESPONSE.SUCCESS;
+    return saveForm(name, description);
   };
 
   const handleFormDelete = async (key, index) => {
@@ -760,7 +737,7 @@ function Form855({ user }) {
           setModalOpen={setSaveFormModalOpen}
           saveForm={handleFormSave}
           formExistsMessage="Form name already in use. Would you like to overwrite?"
-          saveFormOverwrite={handleFormOverwrite}
+          saveFormOverwrite={saveForm}
         />
       )}
       {formDrawerOpen && (
