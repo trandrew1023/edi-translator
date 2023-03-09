@@ -10,26 +10,26 @@ export function to855(purchaseOrder, lineItems) {
   text = text.concat(purchaseOrder.receiverId);
   text = text.padEnd(text.length + (15 - purchaseOrder.receiverId.length));
   text = text.concat(`*`);
-  text = text.concat(purchaseOrder.poDate.format('YYMMDD'));
+  text = text.concat(purchaseOrder.poDate.format("YYMMDD"));
   text = text.concat(`*`);
-  text = text.concat(purchaseOrder.poDate.format('HHmm'));
+  text = text.concat(purchaseOrder.poDate.format("HHmm"));
   text = text.concat(`*U*00401*200000001*0*P*>\\GS*PR*`);
   text = text.concat(purchaseOrder.senderId);
   text = text.concat(`*`);
   text = text.concat(purchaseOrder.receiverId);
   text = text.concat(`*`);
-  text = text.concat(purchaseOrder.poDate.format('YYYYMMDD'));
+  text = text.concat(purchaseOrder.poDate.format("YYYYMMDD"));
   text = text.concat(`*`);
-  text = text.concat(purchaseOrder.poDate.format('HHmm'));
+  text = text.concat(purchaseOrder.poDate.format("HHmm"));
   text = text.concat(`*300000001*X*004010\\ST*855*40001\\BAK*00*`);
   numberOfSegments++; // ST
   text = text.concat(purchaseOrder.acknowledgementType);
   text = text.concat(`*`);
   text = text.concat(purchaseOrder.purchaseOrderNumber);
   text = text.concat(`*`);
-  text = text.concat(purchaseOrder.poDate.format('YYYYMMDD'));
+  text = text.concat(purchaseOrder.poDate.format("YYYYMMDD"));
   text = text.concat(`*****`);
-  text = text.concat(purchaseOrder.ackDate.format('YYYYMMDD'));
+  text = text.concat(purchaseOrder.ackDate.format("YYYYMMDD"));
   text = text.concat(`\\`);
   numberOfSegments++; // BAK
   if (purchaseOrder.headerComment) {
