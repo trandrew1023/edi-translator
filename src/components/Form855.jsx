@@ -1,9 +1,9 @@
-import { MenuOpen } from "@mui/icons-material";
-import AddCommentIcon from "@mui/icons-material/AddComment";
-import CommentIcon from "@mui/icons-material/Comment";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import DownloadIcon from "@mui/icons-material/Download";
-import UpdateIcon from "@mui/icons-material/Update";
+import { MenuOpen } from '@mui/icons-material';
+import AddCommentIcon from '@mui/icons-material/AddComment';
+import CommentIcon from '@mui/icons-material/Comment';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import DownloadIcon from '@mui/icons-material/Download';
+import UpdateIcon from '@mui/icons-material/Update';
 import {
   Alert,
   Button,
@@ -19,13 +19,13 @@ import {
   TextField,
   Tooltip,
   Typography,
-} from "@mui/material";
-import { Box } from "@mui/system";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import dayjs from "dayjs";
-import { logEvent } from "firebase/analytics";
+} from '@mui/material';
+import { Box } from '@mui/system';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs from 'dayjs';
+import { logEvent } from 'firebase/analytics';
 import {
   deleteDoc,
   deleteField,
@@ -33,57 +33,57 @@ import {
   getDoc,
   setDoc,
   updateDoc,
-} from "firebase/firestore";
-import { nanoid } from "nanoid";
-import PropTypes from "prop-types";
-import { React, useEffect, useState } from "react";
-import { to855 } from "../common/855Translator";
-import { FORM_SAVE_RESPONSE } from "../common/Constants";
-import { analytics, db } from "../common/Firebase";
-import { alertStyle, tempAlertStyle } from "../common/Styles";
-import poAckTypeCodes from "../static/data/poAckTypeCodes.json";
-import icon from "../static/images/chick.png";
-import CommentModal from "./CommentModal";
-import FormDrawer from "./FormDrawer";
-import LineItems from "./LineItems";
-import SaveFormModal from "./SaveFormModal";
+} from 'firebase/firestore';
+import { nanoid } from 'nanoid';
+import PropTypes from 'prop-types';
+import { React, useEffect, useState } from 'react';
+import { to855 } from '../common/855Translator';
+import { FORM_SAVE_RESPONSE } from '../common/Constants';
+import { analytics, db } from '../common/Firebase';
+import { alertStyle, tempAlertStyle } from '../common/Styles';
+import poAckTypeCodes from '../static/data/poAckTypeCodes.json';
+import icon from '../static/images/chick.png';
+import CommentModal from './CommentModal';
+import FormDrawer from './FormDrawer';
+import LineItems from './LineItems';
+import SaveFormModal from './SaveFormModal';
 
 /**
  * This component renders the form to modify and generate EDI 855 files.
  */
 function Form855({ user }) {
   const [purchaseOrder, setPurchaseOrder] = useState({
-    purchaseOrderNumber: "",
-    senderId: "",
-    receiverId: "",
-    accountNumber: "",
+    purchaseOrderNumber: '',
+    senderId: '',
+    receiverId: '',
+    accountNumber: '',
     poDate: dayjs(new Date()),
     ackDate: dayjs(new Date()),
-    acknowledgementType: "AC",
-    headerComment: "",
+    acknowledgementType: 'AC',
+    headerComment: '',
   });
   const [lineItems, setLineItems] = useState(
     new Map([
       [
         nanoid(),
         {
-          item: "",
-          description: "",
-          unitOfMeasure: "EA",
-          orderedQuantity: "0",
-          acknowledgedQuantity: "0",
-          price: "0.00",
-          acknowledgementStatus: "IA",
+          item: '',
+          description: '',
+          unitOfMeasure: 'EA',
+          orderedQuantity: '0',
+          acknowledgedQuantity: '0',
+          price: '0.00',
+          acknowledgementStatus: 'IA',
         },
       ],
-    ])
+    ]),
   );
   const [ackDateChecked, setAckDateChecked] = useState(false);
   const [commentModalOpen, setCommentModalOpen] = useState(false);
-  const [fileDownload, setFileDownload] = useState("");
+  const [fileDownload, setFileDownload] = useState('');
   const [formDrawerOpen, setFormDrawerOpen] = useState(false);
   const [formErrors, setFormErrors] = useState({});
-  const [generatedText, setGeneratedText] = useState("");
+  const [generatedText, setGeneratedText] = useState('');
   const [getSavedFormsLoading, setGetSavedFormsLoading] = useState(false);
   const [lineItemErrors, setLineItemErrors] = useState(new Map());
   const [poDateChecked, setPoDateChecked] = useState(false);
@@ -97,7 +97,7 @@ function Form855({ user }) {
 
   const handleTempAlert = () => {
     setTempAlert(false);
-    localStorage.setItem("tempAlert-0.8.0", true);
+    localStorage.setItem('tempAlert-0.8.0', true);
   };
 
   const handleAckDateChange = (newValue) => {
@@ -109,27 +109,27 @@ function Form855({ user }) {
   };
 
   const handleSave = () => {
-    localStorage.setItem("purchaseOrder", JSON.stringify(purchaseOrder));
-    localStorage.setItem("lineItems", JSON.stringify([...lineItems]));
+    localStorage.setItem('purchaseOrder', JSON.stringify(purchaseOrder));
+    localStorage.setItem('lineItems', JSON.stringify([...lineItems]));
   };
 
   const handleLineItemsChange = (updatedLineItems) => {
     setLineItems(updatedLineItems);
-    if (generatedText) setGeneratedText("");
+    if (generatedText) setGeneratedText('');
   };
 
   const handleSaveWithParams = (purchaseOrderToSave, lineItemsToSave) => {
-    localStorage.setItem("purchaseOrder", JSON.stringify(purchaseOrderToSave));
-    localStorage.setItem("lineItems", JSON.stringify([...lineItemsToSave]));
+    localStorage.setItem('purchaseOrder', JSON.stringify(purchaseOrderToSave));
+    localStorage.setItem('lineItems', JSON.stringify([...lineItemsToSave]));
   };
 
   const handleSubmit = () => {
-    logEvent(analytics, "generate", {
-      form: "855",
+    logEvent(analytics, 'generate', {
+      form: '855',
     });
     setFormErrors({});
     setLineItemErrors(new Map());
-    setGeneratedText("");
+    setGeneratedText('');
     handleSave();
     const checkForm = {};
     if (!purchaseOrder.purchaseOrderNumber) {
@@ -188,7 +188,7 @@ function Form855({ user }) {
     setPurchaseOrder(updatedPurchaseOrder);
     handleSaveWithParams(updatedPurchaseOrder, lineItems);
     const submittedPurchaseOrder = to855(updatedPurchaseOrder, lineItems);
-    const file = new Blob([submittedPurchaseOrder], { type: "text/plain" });
+    const file = new Blob([submittedPurchaseOrder], { type: 'text/plain' });
     setFileDownload(window.URL.createObjectURL(file));
     setGeneratedText(submittedPurchaseOrder);
   };
@@ -208,7 +208,7 @@ function Form855({ user }) {
     if (!name) {
       return FORM_SAVE_RESPONSE.FAILURE;
     }
-    const savedFormsRef = doc(db, user.uid, "savedForms");
+    const savedFormsRef = doc(db, user.uid, 'savedForms');
     const savedFormsDoc = await getDoc(savedFormsRef);
     if (savedFormsDoc.exists()) {
       await updateDoc(savedFormsRef, {
@@ -248,7 +248,7 @@ function Form855({ user }) {
 
   const handleFormDelete = async (key, index) => {
     await deleteDoc(doc(db, user.uid, key));
-    await updateDoc(doc(db, user.uid, "savedForms"), {
+    await updateDoc(doc(db, user.uid, 'savedForms'), {
       [key]: deleteField(),
     });
     const newSavedForms = { ...savedForms };
@@ -261,100 +261,100 @@ function Form855({ user }) {
   const resetLineItems = () => {
     setFormErrors({});
     setLineItemErrors(new Map());
-    setGeneratedText("");
+    setGeneratedText('');
     setLineItems(
       new Map([
         [
           nanoid(),
           {
-            item: "",
-            description: "",
-            unitOfMeasure: "EA",
-            orderedQuantity: "0",
-            acknowledgedQuantity: "0",
-            price: "0.00",
-            acknowledgementStatus: "IA",
+            item: '',
+            description: '',
+            unitOfMeasure: 'EA',
+            orderedQuantity: '0',
+            acknowledgedQuantity: '0',
+            price: '0.00',
+            acknowledgementStatus: 'IA',
           },
         ],
-      ])
+      ]),
     );
-    localStorage.removeItem("lineItems");
+    localStorage.removeItem('lineItems');
   };
 
   const handleReset = () => {
-    logEvent(analytics, "reset", {
-      form: "855",
+    logEvent(analytics, 'reset', {
+      form: '855',
     });
     // eslint-disable-next-line no-alert
-    const reset = window.confirm("Are you sure you want to reset?");
+    const reset = window.confirm('Are you sure you want to reset?');
     if (reset) {
       setPurchaseOrder({
-        purchaseOrderNumber: "",
-        senderId: "",
-        receiverId: "",
-        accountNumber: "",
+        purchaseOrderNumber: '',
+        senderId: '',
+        receiverId: '',
+        accountNumber: '',
         poDate: dayjs(new Date()),
         ackDate: dayjs(new Date()),
-        acknowledgementType: "AC",
+        acknowledgementType: 'AC',
       });
       resetLineItems();
-      localStorage.removeItem("purchaseOrder");
+      localStorage.removeItem('purchaseOrder');
     }
   };
 
   const handleLineItemReset = () => {
-    logEvent(analytics, "clear_line_items", {
-      form: "855",
+    logEvent(analytics, 'clear_line_items', {
+      form: '855',
     });
     // eslint-disable-next-line no-alert
     const reset = window.confirm(
-      "Are you sure you want to clear all line items?"
+      'Are you sure you want to clear all line items?',
     );
     if (reset) {
       setFormErrors({});
       setLineItemErrors(new Map());
-      setGeneratedText("");
+      setGeneratedText('');
       setLineItems(
         new Map([
           [
             nanoid(),
             {
-              item: "",
-              description: "",
-              unitOfMeasure: "EA",
-              orderedQuantity: "0",
-              acknowledgedQuantity: "0",
-              price: "0.00",
-              acknowledgementStatus: "IA",
+              item: '',
+              description: '',
+              unitOfMeasure: 'EA',
+              orderedQuantity: '0',
+              acknowledgedQuantity: '0',
+              price: '0.00',
+              acknowledgementStatus: 'IA',
             },
           ],
-        ])
+        ]),
       );
-      localStorage.removeItem("lineItems");
+      localStorage.removeItem('lineItems');
     }
   };
 
   const handlePoDateChecked = () => {
     const newPoDateChecked = !poDateChecked;
     setPoDateChecked(newPoDateChecked);
-    localStorage.setItem("poDateChecked", newPoDateChecked);
+    localStorage.setItem('poDateChecked', newPoDateChecked);
   };
 
   const handleAckDateChecked = () => {
     const newAckDateChecked = !ackDateChecked;
     setAckDateChecked(newAckDateChecked);
-    localStorage.setItem("ackDateChecked", newAckDateChecked);
+    localStorage.setItem('ackDateChecked', newAckDateChecked);
   };
 
   useEffect(() => {
-    const checkAlert = localStorage.getItem("tempAlert-0.8.0");
+    const checkAlert = localStorage.getItem('tempAlert-0.8.0');
     if (!checkAlert) {
       setTempAlert(true);
     }
-    let savedPurchaseOrder = localStorage.getItem("purchaseOrder");
-    const savedLineItems = localStorage.getItem("lineItems");
-    const savedPoDateChecked = localStorage.getItem("poDateChecked");
-    const savedAckDateChecked = localStorage.getItem("ackDateChecked");
+    let savedPurchaseOrder = localStorage.getItem('purchaseOrder');
+    const savedLineItems = localStorage.getItem('lineItems');
+    const savedPoDateChecked = localStorage.getItem('poDateChecked');
+    const savedAckDateChecked = localStorage.getItem('ackDateChecked');
     if (savedPurchaseOrder) {
       savedPurchaseOrder = JSON.parse(savedPurchaseOrder);
       setPurchaseOrder({
@@ -371,10 +371,10 @@ function Form855({ user }) {
       }
     }
     if (savedPoDateChecked) {
-      setPoDateChecked(savedPoDateChecked === "true");
+      setPoDateChecked(savedPoDateChecked === 'true');
     }
     if (savedAckDateChecked) {
-      setAckDateChecked(savedAckDateChecked === "true");
+      setAckDateChecked(savedAckDateChecked === 'true');
     }
   }, []);
 
@@ -387,12 +387,12 @@ function Form855({ user }) {
   };
 
   const editPurchaseOrder = (event, param) => {
-    setGeneratedText("");
+    setGeneratedText('');
     setPurchaseOrder({ ...purchaseOrder, [param]: event.target.value });
   };
 
   const editPurchaseOrderHeaderComment = (updatedComment) => {
-    editPurchaseOrder({ target: { value: updatedComment } }, "headerComment");
+    editPurchaseOrder({ target: { value: updatedComment } }, 'headerComment');
   };
 
   const closeFormDrawer = () => {
@@ -408,7 +408,7 @@ function Form855({ user }) {
     // TODO optimize to check if the the form has been updated compared to the
     // current form to avoid extra document reads.
     if (user) {
-      const savedFormsRef = doc(db, user.uid, "savedForms");
+      const savedFormsRef = doc(db, user.uid, 'savedForms');
       const savedFormsDoc = await getDoc(savedFormsRef);
       if (savedFormsDoc.exists()) {
         const data = savedFormsDoc.data();
@@ -424,8 +424,8 @@ function Form855({ user }) {
   };
 
   const openFormDrawer = () => {
-    logEvent(analytics, "open_saved_forms", {
-      form: "855",
+    logEvent(analytics, 'open_saved_forms', {
+      form: '855',
     });
     getSavedForms();
     setFormDrawerOpen(true);
@@ -439,7 +439,7 @@ function Form855({ user }) {
         const data = docSnap.data();
         setPurchaseOrder(JSON.parse(data.purchaseOrder));
         setLineItems(new Map(JSON.parse(data.lineItems)));
-        setGeneratedText("");
+        setGeneratedText('');
       }
     };
     fetch855Form();
@@ -468,10 +468,10 @@ function Form855({ user }) {
           error={formErrors.purchaseOrderNumber}
           label="Purchase order #"
           value={purchaseOrder.purchaseOrderNumber}
-          onChange={(event) => editPurchaseOrder(event, "purchaseOrderNumber")}
+          onChange={(event) => editPurchaseOrder(event, 'purchaseOrderNumber')}
         />
         {formErrors.purchaseOrderNumber && (
-          <Typography variant="caption" sx={{ color: "red" }}>
+          <Typography variant="caption" sx={{ color: 'red' }}>
             Please fill out required field
           </Typography>
         )}
@@ -483,10 +483,10 @@ function Form855({ user }) {
           error={formErrors.senderId}
           label="Sender ID"
           value={purchaseOrder.senderId}
-          onChange={(event) => editPurchaseOrder(event, "senderId")}
+          onChange={(event) => editPurchaseOrder(event, 'senderId')}
         />
         {formErrors.senderId && (
-          <Typography variant="caption" sx={{ color: "red" }}>
+          <Typography variant="caption" sx={{ color: 'red' }}>
             Please fill out required field
           </Typography>
         )}
@@ -498,10 +498,10 @@ function Form855({ user }) {
           error={formErrors.receiverId}
           label="Receiver ID"
           value={purchaseOrder.receiverId}
-          onChange={(event) => editPurchaseOrder(event, "receiverId")}
+          onChange={(event) => editPurchaseOrder(event, 'receiverId')}
         />
         {formErrors.receiverId && (
-          <Typography variant="caption" sx={{ color: "red" }}>
+          <Typography variant="caption" sx={{ color: 'red' }}>
             Please fill out required field
           </Typography>
         )}
@@ -511,7 +511,7 @@ function Form855({ user }) {
           fullWidth
           label="Account number"
           value={purchaseOrder.accountNumber}
-          onChange={(event) => editPurchaseOrder(event, "accountNumber")}
+          onChange={(event) => editPurchaseOrder(event, 'accountNumber')}
         />
       </Grid>
       <Grid item md={4}>
@@ -542,7 +542,7 @@ function Form855({ user }) {
           <Select
             label="Acknowledgement type"
             value={purchaseOrder.acknowledgementType}
-            onChange={(e) => editPurchaseOrder(e, "acknowledgementType")}
+            onChange={(e) => editPurchaseOrder(e, 'acknowledgementType')}
           >
             {poAckTypeCodes.map((poAckTypeCode) => (
               <MenuItem value={poAckTypeCode.code} key={poAckTypeCode.code}>
@@ -583,8 +583,8 @@ function Form855({ user }) {
           {purchaseOrder.headerComment ? <CommentIcon /> : <AddCommentIcon />}
           <Typography ml={1}>
             {purchaseOrder.headerComment
-              ? "Edit header comment"
-              : "Add header comment"}
+              ? 'Edit header comment'
+              : 'Add header comment'}
           </Typography>
         </IconButton>
       </Grid>
@@ -602,8 +602,8 @@ function Form855({ user }) {
     <Grid item xs={12}>
       <Typography variant="h4">Generated 855 file text</Typography>
       <Box sx={{ border: 1 }}>
-        <Typography sx={{ wordBreak: "break-word" }}>
-          {generatedText.replace(/ /g, "\u00A0")}
+        <Typography sx={{ wordBreak: 'break-word' }}>
+          {generatedText.replace(/ /g, '\u00A0')}
         </Typography>
       </Box>
       <Tooltip
@@ -616,13 +616,13 @@ function Form855({ user }) {
           onClick={() => {
             navigator.clipboard.writeText(generatedText);
             setToolTipOpen(true);
-            logEvent(analytics, "copy_generated_text", {
-              form: "855",
+            logEvent(analytics, 'copy_generated_text', {
+              form: '855',
             });
           }}
           sx={{
-            marginLeft: "auto",
-            float: "right",
+            marginLeft: 'auto',
+            float: 'right',
           }}
         >
           <ContentCopyIcon />
@@ -635,13 +635,13 @@ function Form855({ user }) {
       >
         <IconButton
           onClick={() => {
-            logEvent(analytics, "download_generated_text", {
-              form: "855",
+            logEvent(analytics, 'download_generated_text', {
+              form: '855',
             });
           }}
           sx={{
-            marginLeft: "auto",
-            float: "right",
+            marginLeft: 'auto',
+            float: 'right',
           }}
         >
           <DownloadIcon />
@@ -678,8 +678,8 @@ function Form855({ user }) {
             onClick={() => {
               handleSave();
               setSaveToolTipOpen(true);
-              logEvent(analytics, "local_save", {
-                form: "855",
+              logEvent(analytics, 'local_save', {
+                form: '855',
               });
             }}
             variant="contained"
@@ -712,7 +712,7 @@ function Form855({ user }) {
         </Button>
         {((formErrors && Object.keys(formErrors).length > 0) ||
           (lineItemErrors && lineItemErrors.size > 0)) && (
-          <Typography sx={{ color: "red" }}>
+          <Typography sx={{ color: 'red' }}>
             Unable to generate, please check the fields
           </Typography>
         )}
@@ -722,7 +722,7 @@ function Form855({ user }) {
           fullWidth
           onClick={handleLineItemReset}
           variant="contained"
-          sx={{ backgroundColor: "red" }}
+          sx={{ backgroundColor: 'red' }}
         >
           Clear line items
         </Button>
@@ -732,7 +732,7 @@ function Form855({ user }) {
           fullWidth
           onClick={handleReset}
           variant="contained"
-          sx={{ backgroundColor: "red" }}
+          sx={{ backgroundColor: 'red' }}
         >
           Reset
         </Button>
@@ -798,10 +798,10 @@ function Form855({ user }) {
               using your Google account to enable saving forms!
               <br />
               <br />
-              Please log any issues{" "}
+              Please log any issues{' '}
               <a href="https://github.com/trandrew1023/edi-translator/issues">
                 here
-              </a>{" "}
+              </a>{' '}
               <br />
               <br />
               Goodbye!

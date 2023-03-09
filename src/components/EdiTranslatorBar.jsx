@@ -1,14 +1,14 @@
-import { AppBar, Avatar, IconButton, Toolbar, Typography } from "@mui/material";
-import { Box, Container } from "@mui/system";
-import PropTypes from "prop-types";
-import { useState } from "react";
-import ProfileModal from "./ProfileModal";
+import { AppBar, Avatar, IconButton, Toolbar, Typography } from '@mui/material';
+import { Box, Container } from '@mui/system';
+import PropTypes from 'prop-types';
+import { useState } from 'react';
+import ProfileModal from './ProfileModal';
 
 /**
  * This component renders the EDI Translator App Bar.
  */
 export default function EdiTranslatorBar({
-  profileImg = "",
+  profileImg = '',
   darkModeToggleButton,
 }) {
   const [profileModalOpen, setProfileModalOpen] = useState(false);
@@ -27,10 +27,10 @@ export default function EdiTranslatorBar({
             }}
             sx={{
               flexGrow: 1,
-              fontSize: "1.75rem",
-              fontWeight: "bold",
-              "&:hover": {
-                cursor: "pointer",
+              fontSize: '1.75rem',
+              fontWeight: 'bold',
+              '&:hover': {
+                cursor: 'pointer',
               },
             }}
           >
@@ -67,7 +67,7 @@ export default function EdiTranslatorBar({
 }
 
 EdiTranslatorBar.defaultProps = {
-  profileImg: "",
+  profileImg: '',
 };
 
 EdiTranslatorBar.propTypes = {

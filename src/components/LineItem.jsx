@@ -2,10 +2,10 @@ import {
   InfoOutlined,
   KeyboardArrowDown,
   KeyboardArrowRight,
-} from "@mui/icons-material";
-import AddCommentIcon from "@mui/icons-material/AddComment";
-import CommentIcon from "@mui/icons-material/Comment";
-import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
+} from '@mui/icons-material';
+import AddCommentIcon from '@mui/icons-material/AddComment';
+import CommentIcon from '@mui/icons-material/Comment';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import {
   Box,
   Button,
@@ -20,11 +20,11 @@ import {
   TextField,
   Tooltip,
   Typography,
-} from "@mui/material";
-import PropTypes from "prop-types";
-import { React, useState } from "react";
-import poLineStatusCodes from "../static/data/poLineStatusCodes.json";
-import CommentModal from "./CommentModal";
+} from '@mui/material';
+import PropTypes from 'prop-types';
+import { React, useState } from 'react';
+import poLineStatusCodes from '../static/data/poLineStatusCodes.json';
+import CommentModal from './CommentModal';
 
 /**
  * This component renders a single line item that can be updated.
@@ -45,7 +45,7 @@ export default function LineItem({
   };
 
   const editLineItemComment = (updatedComment) => {
-    handleEventChange({ target: { value: updatedComment } }, "comment");
+    handleEventChange({ target: { value: updatedComment } }, 'comment');
   };
 
   const handleLineItemCollapse = () => {
@@ -67,12 +67,12 @@ export default function LineItem({
         {getLineItemDisplay()}
       </Button>
       <IconButton onClick={() => removeLineItem(lineItemKey)}>
-        <RemoveCircleIcon sx={{ color: "red", mr: 1 }} />
+        <RemoveCircleIcon sx={{ color: 'red', mr: 1 }} />
         <Typography>Remove line item</Typography>
       </IconButton>
       <Collapse
         in={lineItemOpen}
-        sx={{ paddingTop: "10px" }}
+        sx={{ paddingTop: '10px' }}
         timeout="auto"
         unmountOnExit
       >
@@ -84,10 +84,10 @@ export default function LineItem({
               error={lineItemError?.item}
               label="Item"
               value={lineItem.item}
-              onChange={(event) => handleEventChange(event, "item")}
+              onChange={(event) => handleEventChange(event, 'item')}
             />
             {lineItemError?.item && (
-              <Typography variant="caption" sx={{ color: "red" }}>
+              <Typography variant="caption" sx={{ color: 'red' }}>
                 Please fill out required field
               </Typography>
             )}
@@ -97,7 +97,7 @@ export default function LineItem({
               fullWidth
               label="Description"
               value={lineItem.description}
-              onChange={(event) => handleEventChange(event, "description")}
+              onChange={(event) => handleEventChange(event, 'description')}
             />
           </Grid>
           <Grid item md={4}>
@@ -107,10 +107,10 @@ export default function LineItem({
               error={lineItemError?.unitOfMeasure}
               label="Unit of Measure"
               value={lineItem.unitOfMeasure}
-              onChange={(event) => handleEventChange(event, "unitOfMeasure")}
+              onChange={(event) => handleEventChange(event, 'unitOfMeasure')}
             />
             {lineItemError?.unitOfMeasure && (
-              <Typography variant="caption" sx={{ color: "red" }}>
+              <Typography variant="caption" sx={{ color: 'red' }}>
                 Please fill out required field
               </Typography>
             )}
@@ -122,10 +122,10 @@ export default function LineItem({
               error={lineItemError?.orderedQuantity}
               label="Ordered quantity"
               value={lineItem.orderedQuantity}
-              onChange={(event) => handleEventChange(event, "orderedQuantity")}
+              onChange={(event) => handleEventChange(event, 'orderedQuantity')}
             />
             {lineItemError?.orderedQuantity && (
-              <Typography variant="caption" sx={{ color: "red" }}>
+              <Typography variant="caption" sx={{ color: 'red' }}>
                 Please fill out required field
               </Typography>
             )}
@@ -138,11 +138,11 @@ export default function LineItem({
               label="Acknowledged quantity"
               value={lineItem.acknowledgedQuantity}
               onChange={(event) =>
-                handleEventChange(event, "acknowledgedQuantity")
+                handleEventChange(event, 'acknowledgedQuantity')
               }
             />
             {lineItemError?.acknowledgedQuantity && (
-              <Typography variant="caption" sx={{ color: "red" }}>
+              <Typography variant="caption" sx={{ color: 'red' }}>
                 Please fill out required field
               </Typography>
             )}
@@ -154,7 +154,7 @@ export default function LineItem({
               error={lineItemError?.price}
               label="Price"
               value={lineItem.price}
-              onChange={(event) => handleEventChange(event, "price")}
+              onChange={(event) => handleEventChange(event, 'price')}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -162,7 +162,7 @@ export default function LineItem({
                       title="Must be numeric with up to 2 decimal values (no symbols)"
                       arrow
                       sx={{
-                        cursor: "pointer",
+                        cursor: 'pointer',
                       }}
                     >
                       <InfoOutlined />
@@ -172,7 +172,7 @@ export default function LineItem({
               }}
             />
             {lineItemError?.price && (
-              <Typography variant="caption" sx={{ color: "red" }}>
+              <Typography variant="caption" sx={{ color: 'red' }}>
                 Please fill out required field
               </Typography>
             )}
@@ -184,7 +184,7 @@ export default function LineItem({
                 label="Acknowledgement Status"
                 value={lineItem.acknowledgementStatus}
                 onChange={(event) =>
-                  handleEventChange(event, "acknowledgementStatus")
+                  handleEventChange(event, 'acknowledgementStatus')
                 }
               >
                 {poLineStatusCodes.map((poLineStatusCode) => (
@@ -202,7 +202,7 @@ export default function LineItem({
             <IconButton onClick={() => setCommentModalOpen(true)}>
               {lineItem.comment ? <CommentIcon /> : <AddCommentIcon />}
               <Typography ml={1}>
-                {lineItem.comment ? "Edit comment" : "Add comment"}
+                {lineItem.comment ? 'Edit comment' : 'Add comment'}
               </Typography>
             </IconButton>
           </Grid>
