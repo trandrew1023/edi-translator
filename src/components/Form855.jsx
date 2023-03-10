@@ -316,26 +316,7 @@ function Form855({ user }) {
       'Are you sure you want to clear all line items?',
     );
     if (reset) {
-      setFormErrors({});
-      setLineItemErrors(new Map());
-      setGeneratedText('');
-      setLineItems(
-        new Map([
-          [
-            nanoid(),
-            {
-              item: '',
-              description: '',
-              unitOfMeasure: 'EA',
-              orderedQuantity: '0',
-              acknowledgedQuantity: '0',
-              price: '0.00',
-              acknowledgementStatus: 'IA',
-            },
-          ],
-        ]),
-      );
-      localStorage.removeItem('lineItems');
+      resetLineItems();
     }
   };
 
