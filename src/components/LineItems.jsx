@@ -81,8 +81,8 @@ function LineItems({ lineItems, lineItemErrors, setLineItems }) {
                   removeLineItem={removeLineItem}
                   updateLineItem={updateLineItem}
                 />
-                <Divider component="li" />
               </ListItem>
+              <Divider component="li" />
             </Fragment>
           ))}
       </List>
