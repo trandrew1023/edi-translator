@@ -36,7 +36,7 @@ import {
 } from 'firebase/firestore';
 import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
-import { React, useCallback, useEffect, useState } from 'react';
+import { React, useRef, useLayoutEffect, useEffect, useState } from 'react';
 import { to855 } from '../common/855Translator';
 import { FORM_SAVE_RESPONSE } from '../common/Constants';
 import { analytics, db } from '../common/Firebase';
@@ -52,11 +52,7 @@ import SaveFormModal from './SaveFormModal';
  * This component renders the form to modify and generate EDI 855 files.
  */
 function Form855({ user }) {
-  const scrollToGeneratedText = useCallback((textRef) => {
-    if (textRef !== null) {
-      textRef.scrollIntoView({ behavior: 'smooth' });
-    }
-  });
+  const generatedTextRef = useRef(null);
   const [purchaseOrder, setPurchaseOrder] = useState({
     purchaseOrderNumber: '',
     senderId: '',
@@ -81,7 +77,7 @@ function Form855({ user }) {
           acknowledgementStatus: 'IA',
         },
       ],
-    ]),
+    ])
   );
   const [ackDateChecked, setAckDateChecked] = useState(false);
   const [commentModalOpen, setCommentModalOpen] = useState(false);
@@ -89,6 +85,7 @@ function Form855({ user }) {
   const [formDrawerOpen, setFormDrawerOpen] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [generatedText, setGeneratedText] = useState('');
+  const [generatedTextScrolled, setGeneratedTextScrolled] = useState(false);
   const [getSavedFormsLoading, setGetSavedFormsLoading] = useState(false);
   const [lineItemErrors, setLineItemErrors] = useState(new Map());
   const [poDateChecked, setPoDateChecked] = useState(false);
@@ -196,6 +193,7 @@ function Form855({ user }) {
     const file = new Blob([submittedPurchaseOrder], { type: 'text/plain' });
     setFileDownload(window.URL.createObjectURL(file));
     setGeneratedText(submittedPurchaseOrder);
+    setGeneratedTextScrolled(!generatedTextScrolled);
   };
 
   const showSuccessfulSaveAlert = () => {
@@ -281,7 +279,7 @@ function Form855({ user }) {
             acknowledgementStatus: 'IA',
           },
         ],
-      ]),
+      ])
     );
     localStorage.removeItem('lineItems');
   };
@@ -313,7 +311,7 @@ function Form855({ user }) {
     });
     // eslint-disable-next-line no-alert
     const reset = window.confirm(
-      'Are you sure you want to clear all line items?',
+      'Are you sure you want to clear all line items?'
     );
     if (reset) {
       resetLineItems();
@@ -363,6 +361,14 @@ function Form855({ user }) {
       setAckDateChecked(savedAckDateChecked === 'true');
     }
   }, []);
+
+  useLayoutEffect(() => {
+    if (generatedText && generatedTextRef.current) {
+      generatedTextRef.current.scrollIntoView({
+        behavior: 'smooth',
+      });
+    }
+  }, [generatedText]);
 
   const handleTooltipClose = () => {
     setToolTipOpen(false);
@@ -629,7 +635,7 @@ function Form855({ user }) {
         href={fileDownload}
       >
         <IconButton
-          ref={scrollToGeneratedText}
+          ref={generatedTextRef}
           onClick={() => {
             logEvent(analytics, 'download_generated_text', {
               form: '855',
