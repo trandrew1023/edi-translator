@@ -198,7 +198,7 @@ export default function LineItem({
               </Select>
             </FormControl>
           </Grid>
-          <Grid item md={4}>
+          <Grid item md={4} sx={{ display: 'flex' }}>
             <IconButton onClick={() => setCommentModalOpen(true)}>
               {lineItem.comment ? <CommentIcon /> : <AddCommentIcon />}
               <Typography ml={1}>

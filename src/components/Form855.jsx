@@ -36,7 +36,7 @@ import {
 } from 'firebase/firestore';
 import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
-import { React, useEffect, useState } from 'react';
+import { React, useCallback, useEffect, useState } from 'react';
 import { to855 } from '../common/855Translator';
 import { FORM_SAVE_RESPONSE } from '../common/Constants';
 import { analytics, db } from '../common/Firebase';
@@ -52,6 +52,11 @@ import SaveFormModal from './SaveFormModal';
  * This component renders the form to modify and generate EDI 855 files.
  */
 function Form855({ user }) {
+  const scrollToGeneratedText = useCallback((textRef) => {
+    if (textRef !== null) {
+      textRef.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
   const [purchaseOrder, setPurchaseOrder] = useState({
     purchaseOrderNumber: '',
     senderId: '',
@@ -458,8 +463,17 @@ function Form855({ user }) {
 
   const renderPurchaseOrderHeader = () => (
     <>
-      <Grid item xs={12} mb={-3}>
-        <Typography variant="h4">Purchase Order Header</Typography>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          marginTop: 3,
+          marginBottom: -2,
+        }}
+      >
+        <Typography variant="h1" fontSize={35}>
+          Purchase Order Header
+        </Typography>
       </Grid>
       <Grid item md={4}>
         <TextField
@@ -537,22 +551,6 @@ function Form855({ user }) {
         />
       </Grid>
       <Grid item md={4}>
-        <FormControl fullWidth>
-          <InputLabel>Acknowledgement type</InputLabel>
-          <Select
-            label="Acknowledgement type"
-            value={purchaseOrder.acknowledgementType}
-            onChange={(e) => editPurchaseOrder(e, 'acknowledgementType')}
-          >
-            {poAckTypeCodes.map((poAckTypeCode) => (
-              <MenuItem value={poAckTypeCode.code} key={poAckTypeCode.code}>
-                {`${poAckTypeCode.code} (${poAckTypeCode.description})`}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Grid>
-      <Grid item md={4}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DateTimePicker
             label="Acknowledgement date"
@@ -579,6 +577,22 @@ function Form855({ user }) {
         />
       </Grid>
       <Grid item md={4}>
+        <FormControl fullWidth>
+          <InputLabel>Acknowledgement type</InputLabel>
+          <Select
+            label="Acknowledgement type"
+            value={purchaseOrder.acknowledgementType}
+            onChange={(e) => editPurchaseOrder(e, 'acknowledgementType')}
+          >
+            {poAckTypeCodes.map((poAckTypeCode) => (
+              <MenuItem value={poAckTypeCode.code} key={poAckTypeCode.code}>
+                {`${poAckTypeCode.code} (${poAckTypeCode.description})`}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Grid>
+      <Grid item md={4} sx={{ display: 'flex' }}>
         <IconButton onClick={() => setCommentModalOpen(true)}>
           {purchaseOrder.headerComment ? <CommentIcon /> : <AddCommentIcon />}
           <Typography ml={1}>
@@ -634,6 +648,7 @@ function Form855({ user }) {
         href={fileDownload}
       >
         <IconButton
+          ref={scrollToGeneratedText}
           onClick={() => {
             logEvent(analytics, 'download_generated_text', {
               form: '855',
