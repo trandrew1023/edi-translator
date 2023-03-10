@@ -15,7 +15,8 @@ import LineItem from './LineItem';
 function LineItems({ lineItems, lineItemErrors, setLineItems }) {
   const addItemRef = useRef(null);
   const [itemAdded, setItemAdded] = useState(false);
-  const [itemRemoved, setItemRemoved] = useState(false);
+  const [itemAddedScrolled, setItemAddedScrolled] = useState(false);
+
   const handleAddLineItem = () => {
     const newLineItems = new Map(lineItems);
     newLineItems.set(nanoid(), {
@@ -29,7 +30,7 @@ function LineItems({ lineItems, lineItemErrors, setLineItems }) {
     });
     setLineItems(newLineItems);
     setItemAdded(true);
-    setItemRemoved(false);
+    setItemAddedScrolled(!itemAddedScrolled);
   };
 
   const removeLineItem = (key) => {
@@ -37,7 +38,6 @@ function LineItems({ lineItems, lineItemErrors, setLineItems }) {
     newLineItems.delete(key);
     setLineItems(newLineItems);
     setItemAdded(false);
-    setItemRemoved(true);
   };
 
   const updateLineItem = (key, field, updatedValue) => {
@@ -47,13 +47,13 @@ function LineItems({ lineItems, lineItemErrors, setLineItems }) {
   };
 
   useEffect(() => {
-    if (itemAdded && addItemRef && !itemRemoved) {
+    if (itemAdded && addItemRef.current) {
       addItemRef.current.scrollIntoView({
         behavior: 'smooth',
         block: 'end',
       });
     }
-  });
+  }, [itemAdded, itemAddedScrolled]);
 
   return (
     <Grid container>
