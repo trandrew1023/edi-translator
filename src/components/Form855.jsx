@@ -36,7 +36,7 @@ import {
 } from 'firebase/firestore';
 import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
-import { React, useEffect, useState } from 'react';
+import { React, useCallback, useEffect, useState } from 'react';
 import { to855 } from '../common/855Translator';
 import { FORM_SAVE_RESPONSE } from '../common/Constants';
 import { analytics, db } from '../common/Firebase';
@@ -52,6 +52,11 @@ import SaveFormModal from './SaveFormModal';
  * This component renders the form to modify and generate EDI 855 files.
  */
 function Form855({ user }) {
+  const scrollToGeneratedText = useCallback((textRef) => {
+    if (textRef !== null) {
+      textRef.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
   const [purchaseOrder, setPurchaseOrder] = useState({
     purchaseOrderNumber: '',
     senderId: '',
@@ -111,6 +116,11 @@ function Form855({ user }) {
   const handleSave = () => {
     localStorage.setItem('purchaseOrder', JSON.stringify(purchaseOrder));
     localStorage.setItem('lineItems', JSON.stringify([...lineItems]));
+  };
+
+  const handleLineItemsChange = (updatedLineItems) => {
+    setLineItems(updatedLineItems);
+    if (generatedText) setGeneratedText('');
   };
 
   const handleSaveWithParams = (purchaseOrderToSave, lineItemsToSave) => {
@@ -253,12 +263,36 @@ function Form855({ user }) {
     changeSavedForms(newSavedForms);
   };
 
+  const resetLineItems = () => {
+    setFormErrors({});
+    setLineItemErrors(new Map());
+    setGeneratedText('');
+    setLineItems(
+      new Map([
+        [
+          nanoid(),
+          {
+            item: '',
+            description: '',
+            unitOfMeasure: 'EA',
+            orderedQuantity: '0',
+            acknowledgedQuantity: '0',
+            price: '0.00',
+            acknowledgementStatus: 'IA',
+          },
+        ],
+      ]),
+    );
+    localStorage.removeItem('lineItems');
+  };
+
   const handleReset = () => {
-    const reset = window.location.confirm('Are you sure you want to reset?');
+    logEvent(analytics, 'reset', {
+      form: '855',
+    });
+    // eslint-disable-next-line no-alert
+    const reset = window.confirm('Are you sure you want to reset?');
     if (reset) {
-      setFormErrors({});
-      setLineItemErrors(new Map());
-      setGeneratedText('');
       setPurchaseOrder({
         purchaseOrderNumber: '',
         senderId: '',
@@ -268,51 +302,21 @@ function Form855({ user }) {
         ackDate: dayjs(new Date()),
         acknowledgementType: 'AC',
       });
-      setLineItems(
-        new Map([
-          [
-            nanoid(),
-            {
-              item: '',
-              description: '',
-              unitOfMeasure: 'EA',
-              orderedQuantity: '0',
-              acknowledgedQuantity: '0',
-              price: '0.00',
-              acknowledgementStatus: 'IA',
-            },
-          ],
-        ]),
-      );
+      resetLineItems();
       localStorage.removeItem('purchaseOrder');
-      localStorage.removeItem('lineItems');
     }
   };
 
   const handleLineItemReset = () => {
-    const reset = window.location.confirm(
+    logEvent(analytics, 'clear_line_items', {
+      form: '855',
+    });
+    // eslint-disable-next-line no-alert
+    const reset = window.confirm(
       'Are you sure you want to clear all line items?',
     );
     if (reset) {
-      setFormErrors({});
-      setLineItemErrors(new Map());
-      setLineItems(
-        new Map([
-          [
-            nanoid(),
-            {
-              item: '',
-              description: '',
-              unitOfMeasure: 'EA',
-              orderedQuantity: '0',
-              acknowledgedQuantity: '0',
-              price: '0.00',
-              acknowledgementStatus: 'IA',
-            },
-          ],
-        ]),
-      );
-      localStorage.removeItem('lineItems');
+      resetLineItems();
     }
   };
 
@@ -336,7 +340,7 @@ function Form855({ user }) {
     let savedPurchaseOrder = localStorage.getItem('purchaseOrder');
     const savedLineItems = localStorage.getItem('lineItems');
     const savedPoDateChecked = localStorage.getItem('poDateChecked');
-    const savedAckDateChcked = localStorage.getItem('ackDateChecked');
+    const savedAckDateChecked = localStorage.getItem('ackDateChecked');
     if (savedPurchaseOrder) {
       savedPurchaseOrder = JSON.parse(savedPurchaseOrder);
       setPurchaseOrder({
@@ -355,8 +359,8 @@ function Form855({ user }) {
     if (savedPoDateChecked) {
       setPoDateChecked(savedPoDateChecked === 'true');
     }
-    if (savedAckDateChcked) {
-      setAckDateChecked(savedAckDateChcked === 'true');
+    if (savedAckDateChecked) {
+      setAckDateChecked(savedAckDateChecked === 'true');
     }
   }, []);
 
@@ -369,6 +373,7 @@ function Form855({ user }) {
   };
 
   const editPurchaseOrder = (event, param) => {
+    setGeneratedText('');
     setPurchaseOrder({ ...purchaseOrder, [param]: event.target.value });
   };
 
@@ -439,8 +444,17 @@ function Form855({ user }) {
 
   const renderPurchaseOrderHeader = () => (
     <>
-      <Grid item xs={12} mb={-3}>
-        <Typography variant="h4">Purchase Order Header</Typography>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          marginTop: 3,
+          marginBottom: -2,
+        }}
+      >
+        <Typography variant="h1" fontSize={35}>
+          Purchase Order Header
+        </Typography>
       </Grid>
       <Grid item md={4}>
         <TextField
@@ -518,22 +532,6 @@ function Form855({ user }) {
         />
       </Grid>
       <Grid item md={4}>
-        <FormControl fullWidth>
-          <InputLabel>Acknowledgement type</InputLabel>
-          <Select
-            label="Acknowledgement type"
-            value={purchaseOrder.acknowledgementType}
-            onChange={(e) => editPurchaseOrder(e, 'acknowledgementType')}
-          >
-            {poAckTypeCodes.map((poAckTypeCode) => (
-              <MenuItem value={poAckTypeCode.code} key={poAckTypeCode.code}>
-                {`${poAckTypeCode.code} (${poAckTypeCode.description})`}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Grid>
-      <Grid item md={4}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DateTimePicker
             label="Acknowledgement date"
@@ -560,6 +558,22 @@ function Form855({ user }) {
         />
       </Grid>
       <Grid item md={4}>
+        <FormControl fullWidth>
+          <InputLabel>Acknowledgement type</InputLabel>
+          <Select
+            label="Acknowledgement type"
+            value={purchaseOrder.acknowledgementType}
+            onChange={(e) => editPurchaseOrder(e, 'acknowledgementType')}
+          >
+            {poAckTypeCodes.map((poAckTypeCode) => (
+              <MenuItem value={poAckTypeCode.code} key={poAckTypeCode.code}>
+                {`${poAckTypeCode.code} (${poAckTypeCode.description})`}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Grid>
+      <Grid item md={4} sx={{ display: 'flex' }}>
         <IconButton onClick={() => setCommentModalOpen(true)}>
           {purchaseOrder.headerComment ? <CommentIcon /> : <AddCommentIcon />}
           <Typography ml={1}>
@@ -573,7 +587,7 @@ function Form855({ user }) {
         <LineItems
           lineItems={lineItems}
           lineItemErrors={lineItemErrors}
-          setLineItems={setLineItems}
+          setLineItems={handleLineItemsChange}
         />
       </Grid>
     </>
@@ -607,10 +621,15 @@ function Form855({ user }) {
           }}
         >
           <ContentCopyIcon />
+          Copy to clipboard
         </IconButton>
       </Tooltip>
-      <a download="edi-translator.855" href={fileDownload}>
+      <a
+        download={`${purchaseOrder.purchaseOrderNumber}.855`}
+        href={fileDownload}
+      >
         <IconButton
+          ref={scrollToGeneratedText}
           onClick={() => {
             logEvent(analytics, 'download_generated_text', {
               form: '855',
@@ -622,6 +641,7 @@ function Form855({ user }) {
           }}
         >
           <DownloadIcon />
+          Download
         </IconButton>
       </a>
     </Grid>

@@ -22,6 +22,8 @@ export default function ProfileModal({
   setProfileModalOpen,
 }) {
   const [user, setUser] = useState(null);
+  const [loginError, setLoginError] = useState(false);
+  const [logoutError, setLogoutError] = useState(false);
   const googleAuthProvider = new GoogleAuthProvider();
 
   const signInWithGoogle = () => {
@@ -30,19 +32,8 @@ export default function ProfileModal({
         const authUser = result.user;
         setUser(authUser);
       })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        const { email } = error.customData;
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // eslint-disable-next-line no-console
-        console.log(
-          'Unable to login using Google with the following errors',
-          errorCode,
-          errorMessage,
-          email,
-          credential,
-        );
+      .catch(() => {
+        setLoginError(true);
       });
   };
 
@@ -51,9 +42,8 @@ export default function ProfileModal({
       .then(() => {
         setUser(null);
       })
-      .catch((error) => {
-        // eslint-disable-next-line no-console
-        console.log(error);
+      .catch(() => {
+        setLogoutError(true);
       });
   };
 
@@ -85,6 +75,16 @@ export default function ProfileModal({
             <GoogleIcon sx={{ mr: 1 }} />
             Sign in with Google
           </IconButton>
+        )}
+        {loginError && (
+          <Typography color="red">
+            Unable to login, please try again later
+          </Typography>
+        )}
+        {logoutError && (
+          <Typography color="red">
+            Unable to logout, please try again later
+          </Typography>
         )}
       </Box>
     </Modal>

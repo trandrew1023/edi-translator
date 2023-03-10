@@ -66,6 +66,10 @@ export default function LineItem({
       >
         {getLineItemDisplay()}
       </Button>
+      <IconButton onClick={() => removeLineItem(lineItemKey)}>
+        <RemoveCircleIcon sx={{ color: 'red', mr: 1 }} />
+        <Typography>Remove line item</Typography>
+      </IconButton>
       <Collapse
         in={lineItemOpen}
         sx={{ paddingTop: '10px' }}
@@ -194,18 +198,12 @@ export default function LineItem({
               </Select>
             </FormControl>
           </Grid>
-          <Grid item md={4}>
+          <Grid item md={4} sx={{ display: 'flex' }}>
             <IconButton onClick={() => setCommentModalOpen(true)}>
               {lineItem.comment ? <CommentIcon /> : <AddCommentIcon />}
               <Typography ml={1}>
                 {lineItem.comment ? 'Edit comment' : 'Add comment'}
               </Typography>
-            </IconButton>
-          </Grid>
-          <Grid item xs={12}>
-            <IconButton onClick={() => removeLineItem(lineItemKey)}>
-              <RemoveCircleIcon sx={{ color: 'red', mr: 1 }} />
-              <Typography>Remove line item</Typography>
             </IconButton>
           </Grid>
           {commentModalOpen && (

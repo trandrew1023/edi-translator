@@ -27,6 +27,8 @@ export default function EdiTranslatorBar({
             }}
             sx={{
               flexGrow: 1,
+              fontSize: '1.75rem',
+              fontWeight: 'bold',
               '&:hover': {
                 cursor: 'pointer',
               },
