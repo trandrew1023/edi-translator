@@ -51,9 +51,9 @@ jobs:
             `;
             if (github.context.payload.action == 'opened') {
               github.issues.createComment({
-                issue_number: context.payload.pull_request.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
+                issue_number: github.context.payload.pull_request.number,
+                owner: github.context.repo.owner,
+                repo: github.context.repo.repo,
                 body: comment
               });
             }
@@ -86,8 +86,8 @@ jobs:
               The preview URL is no longer accessible.
             `;
             github.issues.createComment({
-              issue_number: context.payload.pull_request.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              issue_number: github.context.payload.pull_request.number,
+              owner: github.context.repo.owner,
+              repo: github.context.repo.repo,
               body: comment
             });
