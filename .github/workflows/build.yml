@@ -49,7 +49,7 @@ jobs:
 
               To view the preview, visit https://trandrew1023.github.io/edi-translator/${{ github.event.pull_request.number }}
             `;
-            if (github.context.payload && github.context.payload.action === 'opened') {
+            if (github.context && github.context.payload.action === 'opened') {
               github.issues.createComment({
                 issue_number: github.context.payload.pull_request.number,
                 owner: github.context.repo.owner,
