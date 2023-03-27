@@ -36,6 +36,8 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build
+          base_dir: ./build
+          baseurl: "https://trandrew1023.github.io/edi-translator/${{ github.event.pull_request.number }}"
           commit_message: Deploy preview for pull request ${{ github.event.pull_request.number }}
       
       - name: Post comment
@@ -45,6 +47,8 @@ jobs:
           script: |
             const comment = `
               Preview of this branch has been deployed.
+
+              To view the preview, visit https://trandrew1023.github.io/edi-translator/${{ github.event.pull_request.number }}
             `;
             github.issues.createComment({
               issue_number: context.payload.pull_request.number,
@@ -58,7 +62,7 @@ jobs:
     if: github.event.pull_request.merged == true || github.event.pull_request.closed == true
     runs-on: ubuntu-latest
     steps:
-      - name: ❌ Delete Preview
+      - name: ❌ Cleanup Preview
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
