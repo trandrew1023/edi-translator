@@ -32,11 +32,11 @@ jobs:
         run: npm run build
 
       - name: 🚀 Deploy Preview
-        uses: peaceiris/actions-gh-pages@v3.11.0
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build
-          full_baseurl: "https://trandrew1023.github.io/edi-translator/${{ github.event.pull_request.number }}"
+          baseurl: "https://trandrew1023.github.io/edi-translator/${{ github.event.pull_request.number }}"
           commit_message: Deploy preview for pull request ${{ github.event.pull_request.number }}
       
       - name: Post preview comment
