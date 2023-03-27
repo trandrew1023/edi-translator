@@ -36,7 +36,8 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/${{ github.event.pull_request.number }}
+          publish_dir: ./build
+          publish_branch: pull-request-preview-${{ github.event.pull_request.number }}
           commit_message: Deploy preview for pull request ${{ github.event.pull_request.number }}
       
       - name: Post preview comment
@@ -75,7 +76,7 @@ jobs:
               ref: `heads/${branchName}`
             });
 
-      - name: Post closing comment
+      - name: 💬 Post closing comment
         uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
