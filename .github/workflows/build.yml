@@ -32,15 +32,14 @@ jobs:
         run: npm run build
 
       - name: 🚀 Deploy Preview
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v3.11.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build
-          base_dir: ./build
-          baseurl: "https://trandrew1023.github.io/edi-translator/${{ github.event.pull_request.number }}"
+          full_baseurl: "https://trandrew1023.github.io/edi-translator/${{ github.event.pull_request.number }}"
           commit_message: Deploy preview for pull request ${{ github.event.pull_request.number }}
       
-      - name: Post comment
+      - name: Post preview comment
         uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -72,4 +71,21 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: `heads/${branchName}`
+            });
+
+      - name: Post closing comment
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const comment = `
+              Preview of this branch has been deleted.
+
+              The preview URL is no longer accessible.
+            `;
+            github.issues.createComment({
+              issue_number: context.payload.pull_request.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
             });
