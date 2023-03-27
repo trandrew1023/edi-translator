@@ -1,6 +1,8 @@
 name: Build
 
-on: [pull_request]
+on: 
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
 
 env:
   REACT_APP_API_KEY: ${{ secrets.REACT_APP_API_KEY }}
@@ -12,7 +14,7 @@ env:
   REACT_APP_MEASUREMENT_ID: ${{ secrets.REACT_APP_MEASUREMENT_ID }}
 
 jobs:
-  build:
+  build-and-deploy-preview:
     name: Build
     runs-on: ubuntu-latest
     environment: dev
@@ -28,3 +30,42 @@ jobs:
 
       - name: 🏗️ Build
         run: npm run build
+
+      - name: 🚀 Deploy Preview
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          commit_message: Deploy preview for pull request ${{ github.event.pull_request.number }}
+      
+      - name: Post comment
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const comment = `
+              Preview of this branch has been deployed.
+            `;
+            github.issues.createComment({
+              issue_number: context.payload.pull_request.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  cleanup-preview:
+    needs: [build-and-deploy-preview]
+    if: github.event.pull_request.merged == true || github.event.pull_request.closed == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: ❌ Delete Preview
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const branchName = 'pull-request-preview-' + context.payload.pull_request.number;
+            github.git.deleteRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `heads/${branchName}`
+            });
