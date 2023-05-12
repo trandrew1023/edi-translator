@@ -11,16 +11,24 @@ export const FORM_SAVE_RESPONSE = {
  */
 export const FORMS = {
   DEFAULT: {
-    display: 'Select form',
-    value: '0',
+    display: "Select form",
+    value: "0",
   },
   855004010: {
-    display: '855 (v004010)',
-    value: '855004010',
+    display: "855 (v004010)",
+    value: "855004010",
+  },
+  856004010: {
+    display: "856 (v004010)",
+    value: "856004010",
   },
 };
 
 /**
  * The list of forms to select from.
  */
-export const ediTranslatorForms = [FORMS.DEFAULT, FORMS[855004010]];
+export const ediTranslatorForms = [
+  FORMS.DEFAULT,
+  FORMS[855004010],
+  FORMS[856004010],
+];

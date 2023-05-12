@@ -1,4 +1,4 @@
-import GitHubIcon from '@mui/icons-material/GitHub';
+import GitHubIcon from "@mui/icons-material/GitHub";
 import {
   Box,
   FormControl,
@@ -7,29 +7,30 @@ import {
   InputLabel,
   MenuItem,
   Select,
-} from '@mui/material';
-import { grey } from '@mui/material/colors';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { onAuthStateChanged } from 'firebase/auth';
-import { React, useEffect, useState } from 'react';
-import './App.css';
-import { ediTranslatorForms, FORMS } from './common/Constants';
-import { auth } from './common/Firebase';
-import DarkModeToggleButton from './components/DarkModeToggleButton';
-import EdiTranslatorBar from './components/EdiTranslatorBar';
-import Form855 from './components/Form855';
+} from "@mui/material";
+import { grey } from "@mui/material/colors";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { onAuthStateChanged } from "firebase/auth";
+import { React, useEffect, useState } from "react";
+import "./App.css";
+import { ediTranslatorForms, FORMS } from "./common/Constants";
+import { auth } from "./common/Firebase";
+import DarkModeToggleButton from "./components/DarkModeToggleButton";
+import EdiTranslatorBar from "./components/EdiTranslatorBar";
+import Form855 from "./components/Form855";
+import Form856 from "./components/Form856";
 
 function App() {
-  const themePref = localStorage.getItem('dark-mode-pref');
-  const lastForm = localStorage.getItem('lastForm');
-  const [darkMode, setDarkMode] = useState(themePref === 'dark');
+  const themePref = localStorage.getItem("dark-mode-pref");
+  const lastForm = localStorage.getItem("lastForm");
+  const [darkMode, setDarkMode] = useState(themePref === "dark");
   const [form, selectForm] = useState(lastForm || 0);
   const [profileImg, setProfileImg] = useState(null);
   const [user, setUser] = useState(null);
 
   const theme = createTheme({
     palette: {
-      mode: darkMode ? 'dark' : 'light',
+      mode: darkMode ? "dark" : "light",
       primary: {
         main: darkMode ? grey[100] : grey[900],
       },
@@ -46,8 +47,8 @@ function App() {
       MuiAppBar: {
         styleOverrides: {
           root: {
-            color: darkMode ? 'white' : 'black',
-            background: darkMode ? '#696969' : '#D3D3D3',
+            color: darkMode ? "white" : "black",
+            background: darkMode ? "#696969" : "#D3D3D3",
           },
         },
       },
@@ -55,15 +56,15 @@ function App() {
   });
 
   const toggleDarkMode = () => {
-    const newMode = darkMode ? 'light' : 'dark';
+    const newMode = darkMode ? "light" : "dark";
     setDarkMode(!darkMode);
-    localStorage.setItem('dark-mode-pref', newMode);
+    localStorage.setItem("dark-mode-pref", newMode);
   };
 
   const handleFormChange = (event) => {
     const selectedForm = event.target.value;
     selectForm(selectedForm);
-    localStorage.setItem('lastForm', selectedForm);
+    localStorage.setItem("lastForm", selectedForm);
   };
 
   useEffect(() => {
@@ -72,7 +73,7 @@ function App() {
         setProfileImg(authUser.photoURL);
         setUser(authUser);
       } else {
-        setProfileImg('');
+        setProfileImg("");
         setUser(null);
       }
     });
@@ -83,7 +84,7 @@ function App() {
       item
       xs={12}
       sx={{
-        textAlign: 'center',
+        textAlign: "center",
         mt: 10,
       }}
     >
@@ -110,6 +111,8 @@ function App() {
     switch (form) {
       case FORMS[855004010].value:
         return <Form855 user={user} />;
+      case FORMS[856004010].value:
+        return <Form856 user={user} />;
       case FORMS.DEFAULT.value:
       default:
         return null;
@@ -129,13 +132,13 @@ function App() {
       />
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          bgcolor: 'background.default',
-          color: 'text.primary',
-          minHeight: '90vh',
-          height: 'auto',
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          bgcolor: "background.default",
+          color: "text.primary",
+          minHeight: "90vh",
+          height: "auto",
         }}
       >
         <Grid
@@ -151,13 +154,13 @@ function App() {
       </Box>
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          bgcolor: 'background.default',
-          color: 'text.primary',
-          minHeight: '10vh',
-          height: 'auto',
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          bgcolor: "background.default",
+          color: "text.primary",
+          minHeight: "10vh",
+          height: "auto",
         }}
       >
         <IconButton
@@ -165,7 +168,7 @@ function App() {
           href="https://github.com/trandrew1023/edi-translator#readme"
           size="large"
           sx={{
-            alignSelf: 'flex-end',
+            alignSelf: "flex-end",
             bottom: 0,
           }}
         >
