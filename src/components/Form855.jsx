@@ -62,6 +62,7 @@ function Form855({ user }) {
     ackDate: dayjs(new Date()),
     acknowledgementType: 'AC',
     headerComment: '',
+    vcnSegmentId: 'VN',
   });
   const [lineItems, setLineItems] = useState(
     new Map([
@@ -299,6 +300,7 @@ function Form855({ user }) {
         poDate: dayjs(new Date()),
         ackDate: dayjs(new Date()),
         acknowledgementType: 'AC',
+        vcnSegmentId: 'VN',
       });
       resetLineItems();
       localStorage.removeItem('purchaseOrder');
@@ -513,6 +515,14 @@ function Form855({ user }) {
           label="Account number"
           value={purchaseOrder.accountNumber}
           onChange={(event) => editPurchaseOrder(event, 'accountNumber')}
+        />
+      </Grid>
+      <Grid item md={4}>
+        <TextField
+          fullWidth
+          label="Vendor Catalog Number Segment ID"
+          value={purchaseOrder.vcnSegmentId}
+          onChange={(event) => editPurchaseOrder(event, 'vcnSegmentId')}
         />
       </Grid>
       <Grid item md={4}>
