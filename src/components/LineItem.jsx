@@ -198,6 +198,22 @@ export default function LineItem({
               </Select>
             </FormControl>
           </Grid>
+          <Grid item md={4}>
+            <TextField
+              fullWidth
+              label="NDC"
+              value={lineItem.ndc}
+              onChange={(event) => handleEventChange(event, 'ndc')}
+            />
+          </Grid>
+          <Grid item md={4}>
+            <TextField
+              fullWidth
+              label="UPN"
+              value={lineItem.upn}
+              onChange={(event) => handleEventChange(event, 'upn')}
+            />
+          </Grid>
           <Grid item md={4} sx={{ display: 'flex' }}>
             <IconButton onClick={() => setCommentModalOpen(true)}>
               {lineItem.comment ? <CommentIcon /> : <AddCommentIcon />}
@@ -243,6 +259,8 @@ LineItem.propTypes = {
     acknowledgementStatus: PropTypes.string,
     unitOfMeasure: PropTypes.string,
     comment: PropTypes.string,
+    ndc: PropTypes.string,
+    upn: PropTypes.string,
   }).isRequired,
   /**
    * The line item errors used to set the input error props.

@@ -124,6 +124,7 @@ FormDrawer.propTypes = {
    * form's unique key (should be the form's name). The form information has:
    * {description: string,}
    */
+  /* eslint-disable react/prop-types */
   savedForms: PropTypes.objectOf(PropTypes.object).isRequired,
   /**
    * The collection of form keys where each key is the
