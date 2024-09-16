@@ -64,10 +64,14 @@ export function to855(purchaseOrder, lineItems) {
     text = text.concat(purchaseOrder.vcnSegmentId);
     text = text.concat(`*`);
     text = text.concat(lineItem.item);
-    text = text.concat(`*N4*`);
-    text = text.concat(lineItem.ndc);
-    text = text.concat(`*UI*`);
-    text = text.concat(lineItem.upn);
+    if (lineItem.ndc) {
+      text = text.concat(`*N4*`);
+      text = text.concat(lineItem.ndc);
+    }
+    if (lineItem.upn) {
+      text = text.concat(`*UI*`);
+      text = text.concat(lineItem.upn);
+    }
     text = text.concat(`*`);
     if (lineItem.description) {
       text = text.concat(`\\PID*F****`);
