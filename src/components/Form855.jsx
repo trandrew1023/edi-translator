@@ -343,6 +343,9 @@ function Form855({ user }) {
     const savedAckDateChecked = localStorage.getItem('ackDateChecked');
     if (savedPurchaseOrder) {
       savedPurchaseOrder = JSON.parse(savedPurchaseOrder);
+      if (!savedPurchaseOrder.vcnSegmentId) {
+        savedPurchaseOrder.vcnSegmentId = 'VN';
+      }
       setPurchaseOrder({
         ...savedPurchaseOrder,
         poDate: dayjs(savedPurchaseOrder.poDate),
