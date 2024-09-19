@@ -63,7 +63,9 @@ export function to855(purchaseOrder, lineItems) {
     text = text.concat(`**`);
     text = text.concat(purchaseOrder.vcnSegmentId);
     text = text.concat(`*`);
-    text = text.concat(lineItem.item);
+    if (lineItem.item) {
+      text = text.concat(lineItem.item);
+    }
     if (lineItem.ndc) {
       text = text.concat(`*N4*`);
       text = text.concat(lineItem.ndc);

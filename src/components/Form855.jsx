@@ -146,12 +146,6 @@ function Form855({ user }) {
     }
     const checkLineItemErrors = new Map();
     lineItems.forEach((lineItem, key) => {
-      if (!lineItem.item) {
-        checkLineItemErrors.set(key, {
-          ...checkLineItemErrors.get(key),
-          item: true,
-        });
-      }
       if (!lineItem.unitOfMeasure) {
         checkLineItemErrors.set(key, {
           ...checkLineItemErrors.get(key),
