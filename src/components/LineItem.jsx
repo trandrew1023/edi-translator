@@ -80,17 +80,10 @@ export default function LineItem({
           <Grid item md={4}>
             <TextField
               fullWidth
-              required
-              error={lineItemError?.item}
               label="Item"
               value={lineItem.item}
               onChange={(event) => handleEventChange(event, 'item')}
             />
-            {lineItemError?.item && (
-              <Typography variant="caption" sx={{ color: 'red' }}>
-                Please fill out required field
-              </Typography>
-            )}
           </Grid>
           <Grid item md={4}>
             <TextField
